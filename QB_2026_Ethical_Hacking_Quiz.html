@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ethical Hacking Quiz 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:        #0d0f14;
+    --surface:   #161b25;
+    --surface2:  #1e2536;
+    --border:    #2a3349;
+    --text:      #dde3f0;
+    --muted:     #6b7a9e;
+    --accent:    #4f8ef7;
+    --green:     #2ecc71;
+    --red:       #e74c3c;
+    --green-bg:  rgba(46,204,113,.12);
+    --red-bg:    rgba(231,76,60,.12);
+    --radius:    14px;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 60px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    width: 100%;
+    max-width: 780px;
+    padding: 36px 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .header .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    text-align: center;
+  }
+  .header h1 span { color: var(--accent); }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    width: 100%;
+    max-width: 780px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .progress-meta .score-live { color: var(--green); }
+  .bar-bg {
+    width: 100%;
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 99px;
+    transition: width .45s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  /* ── CHAPTER BADGE ── */
+  .chapter-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .15em;
+    color: var(--accent);
+    background: rgba(79,142,247,.1);
+    border: 1px solid rgba(79,142,247,.25);
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  /* ── CARD ── */
+  .card {
+    width: 100%;
+    max-width: 780px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 40px 32px;
+    position: relative;
+    animation: fadeSlideIn .35s ease both;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: .1em;
+  }
+  .q-text {
+    font-size: clamp(16px, 2.5vw, 18px);
+    font-weight: 700;
+    line-height: 1.55;
+    margin-bottom: 28px;
+    letter-spacing: -.01em;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .12s;
+    position: relative;
+    overflow: hidden;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--accent);
+    background: rgba(79,142,247,.07);
+    transform: translateX(3px);
+  }
+  .opt.locked { cursor: default; }
+
+  .opt-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .18s, border-color .18s, color .18s;
+  }
+  .opt-text {
+    font-size: 14px;
+    line-height: 1.45;
+    flex: 1;
+  }
+  .opt-icon {
+    font-size: 18px;
+    margin-left: auto;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+
+  /* correct */
+  .opt.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    animation: pulse-green .35s ease;
+  }
+  .opt.correct .opt-label {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+  .opt.correct .opt-icon { opacity: 1; color: var(--green); }
+
+  /* wrong */
+  .opt.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    animation: pulse-red .35s ease;
+  }
+  .opt.wrong .opt-label {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .opt.wrong .opt-icon { opacity: 1; color: var(--red); }
+
+  @keyframes pulse-green {
+    0%   { box-shadow: 0 0 0 0 rgba(46,204,113,.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(46,204,113,0); }
+    100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+  }
+  @keyframes pulse-red {
+    0%   { box-shadow: 0 0 0 0 rgba(231,76,60,.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(231,76,60,0); }
+    100% { box-shadow: 0 0 0 0 rgba(231,76,60,0); }
+  }
+
+  /* ── MEMORY ANCHOR ── */
+  .anchor {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: rgba(79,142,247,.07);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    display: none;
+    animation: fadeSlideIn .3s ease both;
+  }
+  .anchor strong { color: var(--accent); font-family: var(--mono); font-size: 11px; letter-spacing:.1em; display:block; margin-bottom:4px; }
+
+  /* ── AUTO-NEXT TIMER BAR ── */
+  .timer-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 0 0 var(--radius) var(--radius);
+    transition: width 1.6s linear;
+  }
+
+  /* ── RESULTS SCREEN ── */
+  .results {
+    width: 100%;
+    max-width: 780px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 52px 40px;
+    text-align: center;
+    animation: fadeSlideIn .4s ease both;
+    display: none;
+  }
+  .results .trophy { font-size: 62px; margin-bottom: 20px; display:block; }
+  .results h2 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 10px; }
+  .results .score-big {
+    font-family: var(--mono);
+    font-size: clamp(52px,10vw,80px);
+    font-weight: 700;
+    line-height: 1;
+    margin: 24px 0;
+  }
+  .results .score-big span { color: var(--accent); }
+  .results .grade { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 12px;
+  }
+  .stat-box .val {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    display: block;
+  }
+  .stat-box .val.green { color: var(--green); }
+  .stat-box .val.red   { color: var(--red);   }
+  .stat-box .val.blue  { color: var(--accent); }
+  .stat-box .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; display: block; letter-spacing: .07em; }
+
+  .btn-restart {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 36px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: .03em;
+    transition: background .18s, transform .12s;
+  }
+  .btn-restart:hover { background: #6aa0ff; transform: translateY(-1px); }
+
+  /* ── CHAPTER SELECT ── */
+  #chapter-select {
+    width: 100%;
+    max-width: 780px;
+    animation: fadeSlideIn .35s ease both;
+  }
+  #chapter-select h2 {
+    font-size: clamp(20px,4vw,26px);
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -.02em;
+  }
+  #chapter-select p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .ch-card {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .12s;
+    position: relative;
+  }
+  .ch-card:hover { border-color: var(--accent); background: rgba(79,142,247,.07); transform: translateY(-2px); }
+  .ch-card .ch-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: .12em;
+  }
+  .ch-card .ch-title { font-size: 14px; font-weight: 700; line-height: 1.4; }
+  .ch-card .ch-count { font-size: 12px; color: var(--muted); margin-top: 8px; font-family: var(--mono); }
+  .ch-card.selected { border-color: var(--accent); background: rgba(79,142,247,.12); }
+  .ch-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 12px; right: 14px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .btn-start-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .18s, transform .12s;
+    margin-right: 12px;
+    margin-top: 4px;
+  }
+  .btn-start-all:hover { background: #6aa0ff; transform: translateY(-1px); }
+  .btn-start-sel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .18s, transform .12s;
+    margin-top: 4px;
+  }
+  .btn-start-sel:hover { background: rgba(79,142,247,.1); transform: translateY(-1px); }
+
+  @media (max-width: 560px) {
+    .card { padding: 24px 20px 20px; }
+    .results { padding: 36px 22px; }
+    .stats-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="eyebrow">▸ Interactive Study Tool</span>
+  <h1>Ethical Hacking <span>QB 2026</span></h1>
+</div>
+
+<!-- CHAPTER SELECT -->
+<div id="chapter-select">
+  <h2>Select Chapters</h2>
+  <p>Choose which chapters to include, or start all at once.</p>
+  <div class="chapter-grid" id="chapterGrid"></div>
+  <button class="btn-start-all" onclick="startQuiz('all')">▶ Start All Chapters</button>
+  <button class="btn-start-sel" onclick="startQuiz('selected')">Start Selected</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-meta">
+    <span id="progressLabel">Question 1 of 0</span>
+    <span class="score-live" id="scoreLive">Score: 0</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<!-- QUIZ CARD -->
+<div id="quizArea" style="display:none">
+  <div class="chapter-badge" id="chapterBadge">Chapter 1</div>
+  <div class="card" id="card">
+    <div class="q-number" id="qNumber">Q1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="options"></div>
+    <div class="anchor" id="anchor"><strong>📌 MEMORY ANCHOR</strong><span id="anchorText"></span></div>
+    <div class="timer-bar" id="timerBar"></div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+  <span class="trophy" id="trophy">🎯</span>
+  <h2 id="resultsTitle">Quiz Complete!</h2>
+  <p class="grade" id="resultsGrade"></p>
+  <div class="score-big"><span id="scorePercent">0</span>%</div>
+  <div class="stats-grid">
+    <div class="stat-box"><span class="val green" id="statCorrect">0</span><span class="lbl">Correct</span></div>
+    <div class="stat-box"><span class="val red"   id="statWrong">0</span><span class="lbl">Wrong</span></div>
+    <div class="stat-box"><span class="val blue"  id="statTotal">0</span><span class="lbl">Total Q's</span></div>
+  </div>
+  <button class="btn-restart" onclick="resetToMenu()">↩ Back to Menu</button>
+</div>
+
+<script>
+/* ============================================================
+   QUESTION BANK  — 10 Chapters, all questions verbatim
+   ============================================================ */
+const CHAPTERS = [
+  {
+    name: "Chapter 1 — Intro to Ethical Hacking",
+    questions: [
+      { q:"What is the primary objective of an ethical hacker?", opts:["To steal data for personal gain","To discover vulnerabilities before cybercriminals exploit them","To leak databases to the public","To damage a company's reputation"], correct:1, anchor:"Ethical hackers (white-hat) are paid professionals who discover and report vulnerabilities before malicious actors can exploit them." },
+      { q:"Which type of hacker is often referred to as a \"white-hat\" hacker?", opts:["Black Hat Hacker","Red Hat Hacker","Ethical Hacker","None of the above"], correct:2, anchor:"The term 'white-hat' hacker is synonymous with 'Ethical Hacker' — someone who operates with permission to improve security." },
+      { q:"According to the \"pillars of ethical hacking,\" what must a tester have before starting?", opts:["A high-speed internet connection","Written permission (Authorization)","The CEO's personal password","A list of all employee names"], correct:1, anchor:"Written authorization is the cornerstone of ethical hacking. Without it, any testing is illegal, regardless of intent." },
+      { q:"What is the first phase of the Cyber Kill Chain?", opts:["Weaponization","Installation","Reconnaissance","Exploitation"], correct:2, anchor:"Reconnaissance is always Stage 1. Attackers gather as much information as possible about the target before any action." },
+      { q:"In which phase of the Cyber Kill Chain does an attacker establish communication between a compromised system and their remote server to control it?", opts:["Delivery","Command and Control","Weaponization","Reconnaissance"], correct:1, anchor:"Command & Control (C2) is where the attacker sets up a communication channel to remote-control the compromised machine." },
+      { q:"Which penetration testing method provides the tester with zero prior knowledge of the system?", opts:["White Box Testing","Gray Box Testing","Black Box Testing","Transparent Testing"], correct:2, anchor:"Black Box = zero knowledge. This simulates a real external attacker who has no inside information about the target." },
+      { q:"Which penetration testing method provides the tester with full access to source code and network diagrams?", opts:["Black Box Testing","White Box Testing","Invisible Testing","External Testing"], correct:1, anchor:"White Box = full knowledge. The tester has complete access to architecture, code, and documentation to find deep flaws." },
+      { q:"What is a \"Bug Bounty Hunter\"?", opts:["A hacker who creates viruses","A freelance ethical hacker who reports bugs for rewards","A person who fixes hardware issues","A government spy"], correct:1, anchor:"Bug Bounty Hunters are freelance ethical hackers who report security vulnerabilities to companies in exchange for monetary rewards." },
+      { q:"What is the purpose of an NDA (Non-Disclosure Agreement) in ethical hacking?", opts:["To give the hacker permission to steal money","To ensure the tester does not leak sensitive client data","To allow the hacker to share findings on social media","To provide the hacker with a free laptop"], correct:1, anchor:"An NDA protects the client by legally preventing the ethical hacker from disclosing sensitive findings discovered during the engagement." },
+      { q:"Which of the following is a common social engineering attack?", opts:["SQL Injection","Phishing","Port Scanning","Firewall Configuration"], correct:1, anchor:"Phishing is the classic social engineering attack — it manipulates human psychology via deceptive emails rather than exploiting code." },
+      { q:"What should be the first step in a penetration test plan?", opts:["Start hacking immediately","Define Objectives","Delete system logs","Install malware"], correct:1, anchor:"Defining objectives sets the scope and rules of engagement, preventing legal and operational chaos during the test." },
+      { q:"Why do organizations use vulnerability scanners?", opts:["To automatically find and prioritize security weaknesses","To slow down the network","To hide data from employees","To replace all human workers"], correct:0, anchor:"Vulnerability scanners automate the detection and prioritization of security weaknesses, saving significant time and reducing human error." },
+      { q:"Which of the following are common cyber threats faced by organizations today?", opts:["Ransomware attacks","Phishing campaigns","Data breaches","All of the above"], correct:3, anchor:"Organizations face a multi-front threat landscape: ransomware, phishing, and data breaches are all prevalent and dangerous." },
+      { q:"What should a comprehensive penetration testing report cover?", opts:["A summary of the process","A list of discovered vulnerabilities","Recommendations for remediation","All of the above"], correct:3, anchor:"A complete pentest report must include the process summary, all discovered vulnerabilities, and clear remediation steps for the client." },
+      { q:"Which of the following are common web application vulnerabilities?", opts:["SQL Injection","Cross-Site Scripting (XSS)","Broken Authentication","All of the above"], correct:3, anchor:"SQL Injection, XSS, and Broken Authentication are all in the OWASP Top 10 — the most critical web application risks." },
+      { q:"What are the main goals of ethical hacking?", opts:["Identifying vulnerabilities","Evaluating security controls","Testing incident response readiness","All of the above"], correct:3, anchor:"Ethical hacking serves three core purposes: finding vulnerabilities, testing controls, and assessing how an organization responds to incidents." },
+      { q:"True or False: Ethical hacking is a proactive cybersecurity defense strategy.", opts:["True","False"], correct:0, anchor:"Ethical hacking is proactive — it finds and fixes vulnerabilities BEFORE attackers can exploit them, rather than reacting after a breach." },
+      { q:"True or False: Social engineering targets human psychology rather than just technology.", opts:["True","False"], correct:0, anchor:"Social engineering exploits human trust, fear, and authority biases. It attacks the 'human OS,' which is often the weakest link." },
+      { q:"xTrue or False: A Gray Box test simulates an insider threat or a user with limited access.", opts:["True","False"], correct:0, anchor:"Gray Box testing gives the tester partial knowledge, simulating an insider threat or a user who has some legitimate system access." },
+      { q:"True or False: It is the penetration tester's responsibility to return systems back to normal after a test.", opts:["True","False"], correct:0, anchor:"Restoring systems is a key professional obligation. Ethical hackers must leave the environment in its original state after testing." },
+    ]
+  },
+  {
+    name: "Chapter 2 — Cyber Kill Chain",
+    questions: [
+      { q:"Who originally developed the Cyber Kill Chain framework?", opts:["Microsoft","Lockheed Martin","Cisco","Google"], correct:1, anchor:"Lockheed Martin developed the Cyber Kill Chain in 2011, adapting a military target engagement model for cybersecurity." },
+      { q:"What is the primary purpose of the Cyber Kill Chain model?", opts:["To help attackers steal more data","To visualize and understand the stages of a cyberattack","To replace all antivirus software","To make the internet faster"], correct:1, anchor:"The Cyber Kill Chain breaks an attack into stages so defenders can understand, detect, and disrupt attacks at any point." },
+      { q:"What is the definition of the \"Delivery\" stage?", opts:["Gathering information about the target","Transmitting a malicious payload to the target","Encrypting the victim's hard drive","Selling data on the dark web"], correct:1, anchor:"Delivery is when the attacker transmits the weapon to the victim, commonly via phishing email, USB drop, or malicious website." },
+      { q:"In the \"Exploitation\" phase, what is the attacker taking advantage of?", opts:["High internet speeds","Vulnerabilities or weak configurations","New hardware updates","Public holiday schedules"], correct:1, anchor:"Exploitation occurs when the attacker triggers their code by taking advantage of a software vulnerability or misconfiguration." },
+      { q:"What does an attacker establish during the \"Command & Control (C2)\" stage?", opts:["A new business partnership","Communication with the compromised system","A legal contract with the victim","A public social media account"], correct:1, anchor:"C2 establishes a remote communication channel so the attacker can issue commands and receive data from the compromised host." },
+      { q:"Some experts suggest an 8th stage focused on financial gain. What is it called?", opts:["Optimization","Monetization","Celebration","Replication"], correct:1, anchor:"Monetization is the proposed 8th stage — converting the compromised access or stolen data into financial gain (e.g., ransomware payment)." },
+      { q:"Why has cryptocurrency increased the monetization of cyberattacks?", opts:["It is printed by the government","It allows attackers to safely and easily receive ransom funds","It prevents hackers from being attacked","It is used to buy better antivirus software"], correct:1, anchor:"Cryptocurrency provides pseudo-anonymity and is hard to trace, making it the preferred currency for ransomware payments worldwide." },
+      { q:"Which security control is specifically mentioned as a way to stop the \"Reconnaissance\" stage?", opts:["Deleting all company emails","Employee awareness and OSINT monitoring","Turning off the office lights","Installing a faster printer"], correct:1, anchor:"Security awareness training and monitoring your own OSINT footprint makes it harder for attackers to gather useful intelligence." },
+      { q:"What tool can defenders use to block unwanted connections during the C2 stage?", opts:["Word Processor","Firewall or DNS filtering","Digital Camera","Spreadsheet Software"], correct:1, anchor:"Firewalls and DNS filtering can block the outbound C2 channels, severing the attacker's ability to control the compromised machine." },
+      { q:"In a real-world phishing example, which file type is often used to hide a malicious macro?", opts:["A plain text file","An Excel file","A music file","A blank image"], correct:1, anchor:"Excel (and Word) files are commonly weaponized with malicious VBA macros that execute when the victim opens the document." },
+      { q:"Which attack type uses a \"Botnet\" to overload a website with traffic?", opts:["SQL Injection","DDoS Attack","Phishing","Zero-Day Attack"], correct:1, anchor:"A DDoS (Distributed Denial of Service) attack uses a botnet — thousands of compromised 'zombie' machines — to flood a target with traffic." },
+      { q:"What is the attacker's main task during the \"Installation\" phase?", opts:["Scanning for open ports","Installing malware or backdoors to maintain access","Asking for a ransom payment","Sending a 'Thank You' email"], correct:1, anchor:"During Installation, the attacker plants malware, backdoors, or rootkits to maintain persistent access even after the system reboots." },
+      { q:"According to the \"Defender Perspective,\" what must a defender do to be successful?", opts:["Secure only the front door","Secure all possible entry points","Hack the attacker back","Only monitor the CEO's computer"], correct:1, anchor:"A holistic defense approach secures ALL entry points — perimeter, endpoints, users, and cloud — because attackers seek the weakest link." },
+      { q:"Why do cyberattacks matter to modern organizations?", opts:["They cause significant financial losses","They result in sensitive data being stolen","They damage the company's reputation","All of the above"], correct:3, anchor:"Cyberattacks have a triple impact: direct financial losses, data theft, and lasting reputational damage that erodes customer trust." },
+      { q:"Which of the following are common types of cyberattacks?", opts:["SQL Injection and Phishing","Ransomware and Malware","DDoS and Zero-Day attacks","All of the above"], correct:3, anchor:"The modern threat landscape is vast — SQL Injection, Phishing, Ransomware, Malware, DDoS, and Zero-Day attacks are all active threats." },
+      { q:"What can defenders do to detect and prevent attacks during the Reconnaissance stage?", opts:["Use network monitoring","Provide security awareness training","Perform regular vulnerability scans","All of the above"], correct:3, anchor:"Stopping recon requires a layered approach: network monitoring, user education, and proactive vulnerability scanning all play a role." },
+      { q:"Attackers use the \"Installation\" phase to establish a foothold using which of the following?", opts:["Backdoors","Trojan horses","Command-line interfaces","All of the above"], correct:3, anchor:"Attackers use backdoors, Trojans, web shells, and direct CLI access during installation to ensure persistent access to the victim." },
+      { q:"True or False: Cybersecurity is about breaking the chain before an attacker reaches their objective.", opts:["True","False"], correct:0, anchor:"The entire point of the Kill Chain model is to give defenders a framework to 'break the chain' and stop the attack at any stage." },
+      { q:"True or False: Attackers often choose their targets by assessing the \"Cost vs. ROI\" (Return on Investment).", opts:["True","False"], correct:0, anchor:"Attackers are strategic — they weigh the effort and risk of an attack against the expected financial or data reward (ROI)." },
+      { q:"True or False: Defenders can detect and stop an attack at any stage of the Cyber Kill Chain.", opts:["True","False"], correct:0, anchor:"The Cyber Kill Chain is not a one-way door. Defenders can intervene and break the attack chain at every single stage." },
+      { q:"True or False: Passive reconnaissance techniques include gathering Open-Source Intelligence (OSINT).", opts:["True","False"], correct:0, anchor:"Passive recon uses publicly available sources (OSINT) like social media, DNS records, and job postings without touching the target." },
+    ]
+  },
+  {
+    name: "Chapter 3 — Malware",
+    questions: [
+      { q:"What is the formal definition of \"Malware\"?", opts:["Any software that is expensive to buy","Malicious software designed to infiltrate, damage, or gain unauthorized access to a system","A type of hardware that speeds up a computer","An official update from a software vendor"], correct:1, anchor:"Malware = Malicious Software. Any code intended to harm, steal, or gain unauthorized access to a system falls under this definition." },
+      { q:"Which type of malware is known for encrypting a user's files and demanding a payment?", opts:["Spyware","Adware","Ransomware","Rootkit"], correct:2, anchor:"Ransomware encrypts the victim's files and demands a ransom (usually in cryptocurrency) to provide the decryption key." },
+      { q:"Unlike a virus, which type of malware can replicate and spread across a network automatically without human help?", opts:["Trojan Horse","Worm","Logic Bomb","Keylogger"], correct:1, anchor:"A Worm self-replicates and spreads autonomously across networks — no human interaction (like opening a file) is required." },
+      { q:"What is the primary characteristic of a \"Trojan Horse\"?", opts:["It deletes itself immediately after being downloaded","It disguises itself as legitimate or useful software to trick users","It only attacks Apple computers","It provides free internet access to the victim"], correct:1, anchor:"A Trojan Horse appears legitimate (game, tool, update) but hides malicious code that executes once the user installs it." },
+      { q:"Which type of malware secretly monitors user activity, such as browsing history and personal information?", opts:["Spyware","Ransomware","Virus","Logic Bomb"], correct:0, anchor:"Spyware silently monitors user activity — browsing habits, keystrokes, and personal data — without the user's knowledge or consent." },
+      { q:"A \"Keylogger\" is a specific type of spyware that records what?", opts:["The user's voice through the microphone","Every keystroke made on the keyboard","The temperature of the CPU","The number of times the mouse is clicked"], correct:1, anchor:"A Keylogger records every keystroke, capturing passwords, messages, and sensitive data typed on the infected keyboard." },
+      { q:"Which type of malware triggers a malicious action only when specific conditions are met, such as a certain date?", opts:["Worm","Logic Bomb","Adware","Rootkit"], correct:1, anchor:"A Logic Bomb is dormant until a specific trigger (a date, an event, or a user action) activates its destructive payload." },
+      { q:"What is the main goal of \"Adware\"?", opts:["To steal bank passwords","To display unwanted advertisements, often as pop-ups","To turn off the computer's monitor","To encrypt the operating system"], correct:1, anchor:"Adware's primary goal is revenue generation — it displays intrusive ads or redirects browsers to monetize the infected device." },
+      { q:"Which type of malware is designed to hide deep within the OS to provide persistent, undetected administrative access?", opts:["Rootkit","Spyware","Trojan Horse","Worm"], correct:0, anchor:"A Rootkit hides at the OS kernel level, making it extremely difficult to detect and providing the attacker with persistent admin-level access." },
+      { q:"What does a \"Fileless Malware\" attack use to execute its payload?", opts:["A physical USB drive","Legitimate system tools like PowerShell or WMI instead of files on disk","A CD-ROM","A printed QR code"], correct:1, anchor:"Fileless malware lives in memory and hijacks legitimate tools (PowerShell, WMI) to execute, leaving no files on disk to scan." },
+      { q:"What is a \"Botnet\"?", opts:["A group of robots that build computers","A network of compromised 'zombie' computers controlled by a central server","A high-speed internet connection for gamers","A chat application for security professionals"], correct:1, anchor:"A Botnet is a network of hijacked 'zombie' computers remotely controlled by a Command & Control server for attacks like DDoS or spam." },
+      { q:"Which of the following is a common way malware is delivered to a victim?", opts:["Buying a new monitor","Phishing emails with malicious attachments","Reading a physical book","Listening to the radio"], correct:1, anchor:"Phishing emails with malicious attachments or links are the #1 malware delivery method, exploiting human trust and curiosity." },
+      { q:"What is the purpose of the \"Persistence\" stage in a malware attack?", opts:["To delete the malware as soon as it is found","To ensure the malware stays on the system even after a reboot","To make the computer run faster","To change the desktop wallpaper"], correct:1, anchor:"Persistence ensures the malware survives reboots and removal attempts by adding itself to startup processes, registry keys, or scheduled tasks." },
+      { q:"Which of the following are common symptoms of a malware infection?", opts:["Sudden system slowdown or frequent crashes","Unexpected pop-up ads and new toolbars","Disabled security software or missing files","All of the above"], correct:3, anchor:"A malware infection can manifest in many ways: slowdowns, crashes, pop-ups, and disabled security tools are all classic warning signs." },
+      { q:"How can individuals and organizations prevent malware infections?", opts:["Keep software and operating systems updated","Use strong, unique passwords and Multi-Factor Authentication (MFA)","Use reputable antivirus/antimalware solutions","All of the above"], correct:3, anchor:"Prevention requires a layered defense: patching, strong authentication, and real-time antimalware protection working together." },
+      { q:"What are the primary impacts of a malware attack on a business?", opts:["Data theft and loss of sensitive information","Financial loss due to downtime or ransom payments","Reputational damage and loss of customer trust","All of the above"], correct:3, anchor:"Malware attacks hit businesses on three fronts simultaneously: stolen data, financial damage, and erosion of customer trust." },
+      { q:"Which of the following are considered types of malware?", opts:["Viruses and Worms","Trojans and Ransomware","Adware and Spyware","All of the above"], correct:3, anchor:"The malware family is large: Viruses, Worms, Trojans, Ransomware, Adware, Spyware, Rootkits, and Keyloggers are all members." },
+      { q:"True or False: A virus requires a host file or human action (like opening a file) to spread.", opts:["True","False"], correct:0, anchor:"Unlike worms, viruses cannot spread on their own — they need a host file and a human action (double-clicking) to replicate." },
+      { q:"True or False: Social Engineering is often used to trick users into installing malware.", opts:["True","False"], correct:0, anchor:"Social engineering (phishing, pretexting) is the primary delivery vehicle for malware, exploiting human psychology rather than code." },
+      { q:"True or False: Mobile devices, such as smartphones, are also targets for malware attacks.", opts:["True","False"], correct:0, anchor:"Mobile malware is a growing threat — smartphones run apps, store data, and have GPS/microphone access, making them valuable targets." },
+      { q:"True or False: Modern malware often uses \"obfuscation\" to hide its code from antivirus scanners.", opts:["True","False"], correct:0, anchor:"Obfuscation (encoding, encrypting, or scrambling code) is a standard technique to evade signature-based antivirus detection." },
+    ]
+  },
+  {
+    name: "Chapter 4 — Reconnaissance",
+    questions: [
+      { q:"What is the first step in the Lockheed Martin Cyber Kill Chain®?", opts:["Weaponization","Delivery","Reconnaissance","Exploitation"], correct:2, anchor:"Reconnaissance is always the first step. No attacker launches an attack without first gathering intelligence on the target." },
+      { q:"What does OSINT stand for?", opts:["Open-System Internal Network","Official Security Intelligence Network","Open-Source Intelligence","Operational Secure Intelligence Tool"], correct:2, anchor:"OSINT = Open-Source Intelligence. It refers to intelligence gathered from publicly available sources like websites, social media, and databases." },
+      { q:"Which tool is used to search for Internet-connected devices like webcams?", opts:["Google","Facebook","Shodan","Scanner"], correct:2, anchor:"Shodan is the 'search engine for hackers' — it indexes internet-connected devices including webcams, routers, and industrial control systems." },
+      { q:"Which of the following is an example of Active Reconnaissance?", opts:["Searching a website","Port scanning","Viewing LinkedIn","Reading annual reports"], correct:1, anchor:"Port scanning directly interacts with the target's systems, making it 'active' — it touches the target and can be logged." },
+      { q:"In the 2012 McAfee case, what hidden data revealed his location?", opts:["A photo caption","EXIF metadata / GPS","A window reflection","Interview video background"], correct:1, anchor:"John McAfee's location was revealed by GPS coordinates embedded in the EXIF metadata of photos posted to the internet." },
+      { q:"What is the term for \"data about data\" found in images, such as GPS coordinates?", opts:["Big data","Metadata","Encrypted data","User data"], correct:1, anchor:"Metadata is 'data about data' — hidden information inside files like images (EXIF) that can reveal GPS location, device, and timestamps." },
+      { q:"What is a common risk associated with Active Reconnaissance?", opts:["No digital footprint","It is completely stealthy","High noise / easily detected","Only uses public info"], correct:2, anchor:"Active recon generates 'noise' — it touches target systems, triggers IDS/IPS alerts, and leaves logs that security teams can detect." },
+      { q:"What is the practice of limiting public exposure of internal details?", opts:["Port Mapping","Data limitization","Port Scanning","Port Researching"], correct:1, anchor:"Data minimization (limiting public exposure) reduces the attack surface by ensuring sensitive internal details are not publicly accessible." },
+      { q:"What did the 2018 Strava incident prove?", opts:["Fitness apps are private","Anonymized data is not always secure","Soldiers cannot exercise","Bases are on Google Maps"], correct:1, anchor:"The Strava heatmap incident proved that even 'anonymized' aggregated fitness data can reveal classified military base locations and patrol routes." },
+      { q:"What is a \"Honeypot\" in reconnaissance?", opts:["A server filled with valuable, stolen data","Intentionally misleading information or systems meant to trap attackers","A very fast type of internet connection","A specific type of malware"], correct:1, anchor:"A honeypot is a decoy system that lures attackers, wastes their time, and gathers intelligence about their tools and techniques." },
+      { q:"What is the best way to handle files before public release?", opts:["Rename to 'Private'","Change font to white","Sanitize / scrub metadata","Use a public password"], correct:2, anchor:"Metadata scrubbing (using tools like ExifTool) removes hidden sensitive data from files before they are published or shared publicly." },
+      { q:"Which of the following can be gathered using OSINT?", opts:["Employee roles","Domain names / IP ranges","Tech stacks from job posts","All of the above"], correct:3, anchor:"OSINT is powerful: job posts reveal tech stacks, LinkedIn reveals employees and roles, and DNS tools reveal IP ranges and infrastructure." },
+      { q:"Why is reconnaissance important for an attacker?", opts:["Minimizes failure risk","Finds path of least resistance","Builds a target profile","All of the above"], correct:3, anchor:"Thorough recon minimizes risk of failure, reveals the weakest entry point, and builds a complete picture of the target — all essential for a successful attack." },
+      { q:"How can a user stay safe from credential stuffing?", opts:["Use unique passwords","Use a Password Manager","Enable MFA","All of the above"], correct:3, anchor:"Defending against credential stuffing requires unique passwords per site (via a password manager) and MFA as a second layer of protection." },
+      { q:"What are the core objectives of reconnaissance?", opts:["Map IT Infrastructure","Identify attack vectors","Profile people/processes","All of the above"], correct:3, anchor:"Recon has three core goals: map the technical infrastructure, find attack vectors, and understand the human/organizational layer." },
+      { q:"True or False: Reconnaissance is the first stage of the Cyber Kill Chain.", opts:["True","False"], correct:0, anchor:"Confirmed: Reconnaissance is Stage 1 of Lockheed Martin's 7-stage Cyber Kill Chain framework." },
+      { q:"True or False: Passive recon is stealthier than active recon.", opts:["True","False"], correct:0, anchor:"Passive recon never touches the target — it only uses public information — making it completely invisible to the target's security tools." },
+      { q:"True or False: Metadata can be found hidden inside images/docs.", opts:["True","False"], correct:0, anchor:"True. Every digital file contains metadata. Images store EXIF data (GPS, device model, timestamp) and documents store author and edit history." },
+      { q:"True or False: 35.5% of breaches start from 3rd party compromises.", opts:["True","False"], correct:0, anchor:"Third-party and supply chain compromises are a massive and growing attack vector, accounting for over a third of all data breaches." },
+      { q:"True or False: SOCMINT uses platforms like LinkedIn and GitHub.", opts:["True","False"], correct:0, anchor:"SOCMINT (Social Media Intelligence) specifically harvests intelligence from platforms like LinkedIn, Twitter/X, GitHub, and Facebook." },
+    ]
+  },
+  {
+    name: "Chapter 5 — Advanced Reconnaissance",
+    questions: [
+      { q:"Passive Reconnaissance is often preferred by attackers because it is:", opts:["Faster than active scanning","Completely undetectable by the target's security systems","Illegal in every country","Used to delete files on the server"], correct:1, anchor:"Passive recon uses only public sources and never touches the target, making it completely invisible to IDS, firewalls, and logging systems." },
+      { q:"What is the primary risk of performing Active Reconnaissance?", opts:["It provides outdated information","It leaves a digital footprint that security systems can log","It is too quiet to be useful","It only works on social media"], correct:1, anchor:"Active recon directly interacts with the target, generating network traffic and log entries that security systems can detect and alert on." },
+      { q:"Which tool would you use to search for vulnerable IoT devices like open webcams?", opts:["Nmap","Shodan","LinkedIn","GitHub"], correct:1, anchor:"Shodan continuously scans the internet and indexes all connected devices, making it a powerful tool for finding exposed IoT devices." },
+      { q:"A LinkedIn job posting for a \"Cisco ASA Specialist\" helps an attacker by:", opts:["Giving them the employee's home address","Revealing the specific security hardware used by the company","Cracking the company's Wi-Fi password","Deleting the company's backups"], correct:1, anchor:"Job postings inadvertently expose the tech stack — a 'Cisco ASA Specialist' posting tells an attacker exactly which firewall to research exploits for." },
+      { q:"If an attacker finds a photo of a server room, what hidden data might tell them exactly where that room is located?", opts:["The file name","GPS coordinates in the metadata (EXIF)","The color of the servers","The resolution of the photo"], correct:1, anchor:"EXIF metadata embedded in photos can contain GPS coordinates that pinpoint the exact physical location where the image was taken." },
+      { q:"Why is password reuse (70% rate) a massive win for attackers?", opts:["It makes the password easier to remember","One leaked password can compromise multiple accounts for the same user","It speeds up the internet connection","It prevents the user from being phished"], correct:1, anchor:"With a 70% password reuse rate, credential stuffing attacks using leaked databases can compromise many accounts with a single password." },
+      { q:"Which tool is a visual \"link analysis\" tool used to map relationships between people and domains?", opts:["Github","Maltego","Sand box","SpiderFoot"], correct:1, anchor:"Maltego is a powerful OSINT and link-analysis tool that visually maps relationships between people, domains, IPs, and organizations." },
+      { q:"What is the \"Path of Least Resistance\"?", opts:["The fastest internet route to a server","The weakest link in a defense that an attacker targets","A type of secure encryption","A guest Wi-Fi password"], correct:1, anchor:"Attackers always seek the Path of Least Resistance — the easiest, lowest-risk way to achieve their objective, often a human or unpatched system." },
+      { q:"\"Shadow IT\" refers to:", opts:["Servers that only run at night","Forgotten or unmanaged assets that bypass standard security controls","Hacking tools used by the government","Encrypted files that cannot be opened"], correct:1, anchor:"Shadow IT is unsanctioned technology (apps, cloud services, devices) used by employees without IT's knowledge, creating invisible security gaps." },
+      { q:"According to the 2025 Threat Report, why do attackers often \"log in\" rather than \"hack in\"?", opts:["Because they have a valid employee ID card","Because they found valid credentials in OSINT sources","Because the servers have no passwords","Because they asked the admin nicely"], correct:1, anchor:"Modern attackers prefer credential-based attacks — using stolen valid credentials found in OSINT sources to 'log in' rather than triggering noisy exploits." },
+      { q:"Which tool is specifically used to extract metadata from images and documents?", opts:["Shodan","ExifTool","LinkedIn","Google Maps"], correct:1, anchor:"ExifTool is the industry-standard open-source tool for reading, writing, and editing metadata in images and documents." },
+      { q:"What is Spear-Phishing?", opts:["Sending emails to millions of people at once","Highly targeted attacks using OSINT to craft convincing fake messages","A physical attack on an underwater cable","A method for cleaning a server's hard drive"], correct:1, anchor:"Spear-phishing uses OSINT (employee names, job roles, recent events) to craft highly personalized phishing messages with much higher success rates." },
+      { q:"What should a company do to prevent metadata leaks?", opts:["Buy more servers","Implement mandatory metadata scrubbing before publishing files","Change their office address","Post more photos on social media"], correct:1, anchor:"Mandatory metadata scrubbing (stripping EXIF, author info, track-changes) from all files before publication prevents unintended information disclosure." },
+      { q:"In the McAfee case study, where did the metadata lead authorities?", opts:["Egypt","Guatemala","USA","Mexico"], correct:1, anchor:"John McAfee was tracked to Guatemala because GPS metadata in a photo taken by a journalist revealed his exact coordinates there." },
+      { q:"True or False: Reconnaissance is the foundational phase of gathering intelligence on a target before an attack.", opts:["True","False"], correct:0, anchor:"Reconnaissance is the essential foundation — every subsequent kill chain stage depends on the intelligence gathered in this phase." },
+      { q:"True or False: Aggregated and anonymized data is not always secure and can sometimes reveal sensitive secrets.", opts:["True","False"], correct:0, anchor:"The Strava incident proved that aggregating anonymized data points can create patterns that reveal sensitive secrets, like military base locations." },
+      { q:"True or False: Active reconnaissance involves direct interaction with target systems and often leaves a digital footprint.", opts:["True","False"], correct:0, anchor:"Active recon definitionally involves touching the target (port scanning, service enumeration), which generates logs and can trigger alerts." },
+      { q:"Which of the following are core objectives of the Reconnaissance phase?", opts:["Map the IT infrastructure","Identify potential attack vectors","Profile people and organizational processes","All of the above"], correct:3, anchor:"Comprehensive recon maps three layers: technical infrastructure, attack vectors, and the human/organizational layer — all three are needed for a complete picture." },
+      { q:"Which of the following are considered valuable OSINT sources for an attacker?", opts:["Social Media (LinkedIn, X, etc.)","Technical communities like GitHub and Stack Overflow","Corporate annual reports and job postings","All of the above"], correct:3, anchor:"Every public information source is potential OSINT: social media, technical forums, corporate filings, and job ads all leak valuable intelligence." },
+      { q:"What actions should individuals take to build an Information Hygiene culture?", opts:["Use password managers for unique passwords","Enable Multi-Factor Authentication (MFA) on all accounts","Think before publishing photos or documents online","All of the above"], correct:3, anchor:"Information hygiene requires three habits: unique passwords, MFA on all accounts, and conscious awareness of what you share publicly online." },
+    ]
+  },
+  {
+    name: "Chapter 6 — Ethical Hacking Phases",
+    questions: [
+      { q:"What is the primary purpose of Ethical Hacking?", opts:["To steal sensitive data for profit","To identify and fix vulnerabilities before they are exploited","To damage a competitor's website","To test how fast a computer can run"], correct:1, anchor:"Ethical hacking's core purpose is proactive defense — finding and fixing vulnerabilities before malicious actors discover and exploit them." },
+      { q:"Which type of hacker is motivated by malicious intent?", opts:["White Hat","Black Hat","Grey Hat","Ethical Hacker"], correct:1, anchor:"Black Hat hackers are motivated by malicious intent — financial gain, espionage, vandalism, or ideology — and operate without permission." },
+      { q:"A \"Grey Hat\" hacker is someone who:", opts:["Always works with full legal permission","Only hacks their own devices","Hacks without permission but usually without malicious intent","Works specifically for a government agency"], correct:2, anchor:"Grey Hats occupy a moral middle ground — they hack without permission (illegal) but typically report findings rather than cause harm." },
+      { q:"According to the 5 phases of hacking, what is the first phase?", opts:["Scanning","Gaining Access","Reconnaissance","Clearing Tracks"], correct:2, anchor:"Reconnaissance is always Phase 1 of any hacking methodology. Intelligence gathering precedes all technical exploitation." },
+      { q:"What is the main goal of the Scanning phase?", opts:["To write the final report","To discover live systems, open ports, and services on a network","To delete the administrator's account","To install a virus on the server"], correct:1, anchor:"Scanning discovers the target's technical landscape: live hosts, open ports, running services, and OS versions — building the attack map." },
+      { q:"Which tool is the industry standard for Network Scanning and port discovery?", opts:["Microsoft Word","Nmap","Google Chrome","VLC Media Player"], correct:1, anchor:"Nmap (Network Mapper) is the gold standard for network scanning — used by both ethical hackers and attackers worldwide for port discovery." },
+      { q:"What is Enumeration in the context of ethical hacking?", opts:["Counting how many computers are in the office","Extracting detailed info like usernames, network shares, and service versions","Calculating the cost of a new firewall","Deleting all files on a hard drive"], correct:1, anchor:"Enumeration extracts granular details about the target: usernames, group memberships, network shares, and service banners — deeper than scanning." },
+      { q:"What is a Vulnerability Assessment?", opts:["Buying new antivirus software","Identifying, quantifying, and prioritizing security weaknesses","Changing all user passwords every day","Physically locking the server room door"], correct:1, anchor:"A Vulnerability Assessment systematically identifies, quantifies, and prioritizes security weaknesses — the foundation for deciding what to fix first." },
+      { q:"A vulnerability with a CVSS score of 10.0 is considered:", opts:["Low risk","Medium risk","Critical risk","No risk"], correct:2, anchor:"CVSS (Common Vulnerability Scoring System) scores range 0-10. A score of 10.0 is the maximum — representing a Critical severity vulnerability." },
+      { q:"During which phase does a hacker actually exploit a vulnerability to gain access on a system?", opts:["Reconnaissance","Gaining Access","Scanning","Reporting"], correct:1, anchor:"'Gaining Access' is the exploitation phase — where vulnerabilities identified in scanning are actively weaponized to breach the target system." },
+      { q:"Why does an ethical hacker attempt to \"Maintain Access\"?", opts:["To help the user finish their work","To ensure they can re-enter the system later even if it restarts","To make the internet connection faster","To hide the fact that they ever logged in"], correct:1, anchor:"Maintaining access tests whether the system can detect and remove a persistent threat — simulating what a real attacker would do post-breach." },
+      { q:"What is the purpose of the \"Clearing Tracks\" phase for a malicious attacker?", opts:["To speed up the computer's performance","To delete logs and hide evidence of their activity","To install a new operating system","To update the server's software"], correct:1, anchor:"Clearing tracks (log deletion, timestamp modification) is how malicious attackers hide their presence and evade forensic investigation after a breach." },
+      { q:"Which operating system is specifically designed for Pentesting/Forensics?", opts:["Windows Home","Kali Linux","Android","macOS"], correct:1, anchor:"Kali Linux is a Debian-based distro pre-loaded with 600+ security tools, designed specifically for penetration testing and digital forensics." },
+      { q:"What is the \"Golden Rule\" an ethical hacker must follow before starting any test?", opts:["Purchase the most expensive tools","Obtain written authorization from the owner","Tell everyone on social media","Change their name"], correct:1, anchor:"Written authorization is the Golden Rule — without it, even well-intentioned testing is a criminal act under computer crime laws worldwide." },
+      { q:"True or False: Ethical hacking is also commonly known as \"Penetration Testing.\"", opts:["True","False"], correct:0, anchor:"Penetration Testing (pentest) is the formal, structured practice of ethical hacking — the terms are used interchangeably in the industry." },
+      { q:"True or False: A White Hat hacker always operates within a legal and ethical framework.", opts:["True","False"], correct:0, anchor:"By definition, White Hat hackers only operate with explicit permission and within agreed-upon scope — always legal, always documented." },
+      { q:"True or False: The \"Findings\" section of a report should include a proof-of-concept for the vulnerabilities found.", opts:["True","False"], correct:0, anchor:"A PoC (proof-of-concept) in the report provides concrete evidence that the vulnerability is real and exploitable — not just theoretical." },
+      { q:"Ethical hacking is characterized as being:", opts:["Authorized by the owner","Documented and recorded","Purposeful to strengthen defenses","All of the above"], correct:3, anchor:"Ethical hacking has three non-negotiable characteristics: it must be authorized, documented, and purposeful — all three must be present." },
+      { q:"Which of these are common tool categories found in Kali Linux?", opts:["Information Gathering and Vulnerability Analysis","Password Attacks and Wireless Attacks","Exploitation Tools and Forensics","All of the above"], correct:3, anchor:"Kali Linux is organized into categories: Info Gathering, Vulnerability Analysis, Exploitation, Password Attacks, Wireless, and Forensics tools." },
+      { q:"What is a key takeaway for a successful ethical hacker?", opts:["Always get written authorization","Document everything for the final report","Think like an attacker to find weaknesses","All of the above"], correct:3, anchor:"The three pillars of a successful ethical hacker: get authorization, document everything, and adopt an adversarial mindset to find real weaknesses." },
+    ]
+  },
+  {
+    name: "Chapter 7 — Risk Management",
+    questions: [
+      { q:"What is the primary definition of Risk Management?", opts:["Avoiding all business activities that might be difficult","A proactive and structured approach to manage and mitigate negative events","Paying for the most expensive insurance available","Waiting for a problem to happen before looking for a solution"], correct:1, anchor:"Risk Management is proactive and structured — it anticipates and mitigates negative events rather than reacting after they occur." },
+      { q:"Risk management is described as a proactive process. What does this mean?", opts:["It only happens after a financial loss","It involves taking action before an event occurs to reduce its impact","It is done once every ten years","It is only used by the CEO of a company"], correct:1, anchor:"Proactive means acting before the event. Risk management identifies threats in advance and puts controls in place before harm occurs." },
+      { q:"Which of these is the first step in the systematic risk management process?", opts:["Monitoring","Identifying potential risks","Communicating findings","Developing control measures"], correct:1, anchor:"You cannot manage what you cannot see — identifying potential risks is always the first step in any formal risk management framework." },
+      { q:"What are the two main factors used to assess a risk?", opts:["Cost and Color","Likelihood and Impact","Speed and Location","Height and Weight"], correct:1, anchor:"Risk = Likelihood × Impact. Every risk is assessed on how likely it is to occur AND how severe the consequences would be if it did." },
+      { q:"How does risk management benefit a Quality Management System (QMS)?", opts:["It makes the system slower and more difficult to use","It anticipates failures, leading to fewer operational surprises","It removes the need for any quality checks","It only helps the marketing department"], correct:1, anchor:"Risk-based thinking in a QMS anticipates process failures before they happen, reducing defects, downtime, and costly operational surprises." },
+      { q:"What is the goal of \"Control Measures\"?", opts:["To make the risk happen faster","To mitigate or reduce the negative impact of a risk","To hide the risk from company managers","To increase the total cost of a project"], correct:1, anchor:"Control measures are the specific actions, policies, or technologies implemented to reduce the likelihood or impact of an identified risk." },
+      { q:"What can derail even the most promising business ventures according to the slides?", opts:["High-quality products","Unmanaged risks","Too many customers","Having a clear strategic plan"], correct:1, anchor:"Unmanaged risks are the silent killer of business ventures — ignoring identified risks allows small problems to escalate into catastrophic failures." },
+      { q:"In risk management, what does \"Resilience\" refer to?", opts:["Being completely immune to any possible problem","The ability to bounce back and continue operating after a disruption","Giving up as soon as a challenge arises","Spending all company savings at once"], correct:1, anchor:"Resilience is the organizational capacity to absorb disruptions and recover quickly — it accepts that incidents will happen and plans for recovery." },
+      { q:"What should be embedded at every organizational level to build a strong safety culture?", opts:["Competitive video gaming","Risk awareness","Complex mathematical formulas","Strict silence during work hours"], correct:1, anchor:"Risk awareness must be embedded at every level — from the board to the front line. A risk-aware culture prevents problems from being ignored." },
+      { q:"What is a \"Multifaceted Threat\"?", opts:["A threat that only happens on the weekend","Risks that manifest in various forms like financial, brand, or regulatory issues","A threat that has many faces like a person","A computer virus that changes its icon"], correct:1, anchor:"A multifaceted threat attacks an organization on multiple fronts simultaneously — financial, reputational, regulatory, and operational." },
+      { q:"What is the \"Value Creation\" aspect of risk management?", opts:["Printing more physical currency","Finding positive opportunities that contribute to sustainable growth","Selling all of the company's equipment","Charging customers double for the same service"], correct:1, anchor:"Risk management isn't just defensive — it also identifies opportunities hidden in uncertainty, creating value and contributing to sustainable growth." },
+      { q:"Which industry was used as an example of integrating risk management for high safety and reliability?", opts:["Fast food","Airlines","Music production","Fashion design"], correct:1, anchor:"The airline industry is the benchmark for risk management excellence — its rigorous safety culture and protocols make it one of the safest industries." },
+      { q:"What happens if a company lacks a \"Risk-based thinking\" approach?", opts:["They become more creative and innovative","They face potential failure and damaging operational surprises","They save a lot of money on paperwork","They never have to follow safety rules"], correct:1, anchor:"Without risk-based thinking, companies are blindsided by operational surprises they could have anticipated and prevented with proper planning." },
+      { q:"Strategic objectives are best met when risk processes are:", opts:["Aligned directly with those objectives","Kept completely separate from the company's goals","Ignored until a disaster happens","Handled only by junior employees"], correct:0, anchor:"Risk management must be aligned with strategic objectives — only then does it become a strategic enabler rather than a compliance checkbox." },
+      { q:"True or False: Risk management is a systematic process involving identifying, assessing, and monitoring risks.", opts:["True","False"], correct:0, anchor:"Risk management follows a systematic cycle: Identify → Assess → Control → Communicate → Monitor. Skipping any step creates blind spots." },
+      { q:"True or False: The ISO 9001:2015 standard explicitly mandates that organizations identify risks and implement action plans.", opts:["True","False"], correct:0, anchor:"ISO 9001:2015 introduced risk-based thinking as a core requirement, mandating that organizations formally identify and address risks and opportunities." },
+      { q:"True or False: Effective risk management can transform potential threats into opportunities for resilience and growth.", opts:["True","False"], correct:0, anchor:"Proactive risk management reframes threats as opportunities to strengthen systems, build resilience, and discover improvements before competitors do." },
+      { q:"What are the potential consequences of failing to manage organizational risks?", opts:["Financial instability and brand reputation damage","Regulatory non-compliance","Operational continuity disruption","All of the above"], correct:3, anchor:"Risk management failure hits all three dimensions: finances, reputation, regulatory standing, and the ability to continue operations." },
+      { q:"A systematic risk management process includes which of the following?", opts:["Identification and Assessment","Control Measures and Communication","Continuous Monitoring","All of the above"], correct:3, anchor:"A complete risk management process covers all phases: Identify, Assess, Control, Communicate, and continuously Monitor — nothing is skipped." },
+      { q:"Building a resilient risk management culture involves:", opts:["Embedding risk awareness at every level","Investing in training and digital tools","Aligning risk processes with strategic objectives","All of the above"], correct:3, anchor:"Resilient risk culture is built on three pillars: organization-wide awareness, investment in capability, and tight alignment with business strategy." },
+    ]
+  },
+  {
+    name: "Chapter 8 — Cyber Kill Chain Deep Dive",
+    questions: [
+      { q:"Which organization developed the Cyber Kill Chain model in 2011?", opts:["Microsoft","Lockheed Martin","Cisco","Google"], correct:1, anchor:"Lockheed Martin published the Cyber Kill Chain in 2011, adapting their military F2T2EA targeting model for cyber defense." },
+      { q:"What is the primary purpose of the Cyber Kill Chain?", opts:["To help attackers bypass security","To break down the stages of a cyberattack to better understand and disrupt them","To sell antivirus software to home users","To replace all human security guards with robots"], correct:1, anchor:"The Kill Chain gives defenders a structured framework to understand attack stages, enabling targeted detection and disruption at each phase." },
+      { q:"In which stage does an attacker gather information about a target to identify vulnerabilities?", opts:["Weaponization","Installation","Reconnaissance","Exploitation"], correct:2, anchor:"Reconnaissance is Stage 1 — gathering target intelligence (OSINT, network mapping, employee profiling) to identify exploitable weaknesses." },
+      { q:"Which stage involves the actual delivering of the malicious payload to the victim (e.g., via email or USB)?", opts:["Reconnaissance","Delivery","Command and Control","Actions on Objectives"], correct:1, anchor:"Delivery is Stage 3 — transmitting the weaponized payload to the target via phishing email, malicious USB, watering hole, or drive-by download." },
+      { q:"What is the goal of the Exploitation phase?", opts:["To buy more server space","To trigger the malicious code by taking advantage of a system vulnerability","To count how many employees work at the company","To fix the software bugs found in the system"], correct:1, anchor:"Exploitation triggers the malicious code by taking advantage of a vulnerability — this is the moment the attacker crosses from access attempt to actual breach." },
+      { q:"During the Installation phase, what is the attacker typically trying to do?", opts:["Uninstall all software on the computer","Establish a backdoor on the victim's system","Update the computer's operating system","Delete the user's browser history"], correct:1, anchor:"Installation plants persistent malware (backdoors, RATs, rootkits) so the attacker maintains access even after the system is restarted or patched." },
+      { q:"What does C2 stand for in the Cyber Kill Chain?", opts:["Computer and Control","Command and Control","Cyber and Code","Capture and Connect"], correct:1, anchor:"C2 = Command and Control. It's the communication infrastructure that lets attackers remotely control compromised systems." },
+      { q:"What occurs during the Command and Control (C2) phase?", opts:["The attacker creates a manual for the employees","The compromised system opens a communication channel to the attacker's server","The attacker turns off the computer","The firewall automatically fixes the breach"], correct:1, anchor:"In C2, the compromised machine 'phones home' to the attacker's server, establishing a persistent channel for issuing commands and receiving data." },
+      { q:"Why is the model called a \"Chain\"?", opts:["Because it is made of metal","Because if a defender 'breaks' any one link, the attack is disrupted","Because all hackers work in a straight line","Because it is used to lock up servers"], correct:1, anchor:"It's a 'chain' because each stage depends on the previous one — break any single link (stage) and the entire attack sequence is disrupted." },
+      { q:"What is the main benefit of identifying an attack during the Reconnaissance phase?", opts:["It is the hardest stage to stop","It allows the attack to be stopped before any damage or entry occurs","It teaches the attacker how to be better","It automatically formats the hard drive"], correct:1, anchor:"Stopping an attack in Reconnaissance is the ideal outcome — the attacker is neutralized before any code runs, any breach occurs, or any damage is done." },
+      { q:"Behavioral analysis is a detection technique most useful during which phases?", opts:["Reconnaissance and Delivery","Exploitation and Installation","Initial planning and research","Choosing a target company"], correct:1, anchor:"Behavioral analysis detects anomalous activity patterns during Exploitation (unusual process execution) and Installation (new persistence mechanisms)." },
+      { q:"What does \"breaking the chain\" mean in cybersecurity?", opts:["Breaking the computer's hardware","Successfully stopping the attacker at any stage before they finish their mission","Forgetting the password to the server","Leaving the company's doors unlocked"], correct:1, anchor:"'Breaking the chain' means successfully disrupting the attacker's kill chain at any stage — preventing them from completing their mission." },
+      { q:"The Cyber Kill Chain was originally inspired by:", opts:["Video game strategies","Military target engagement models","Cooking recipes","Construction blueprints"], correct:1, anchor:"Lockheed Martin adapted their military F2T2EA (Find, Fix, Track, Target, Engage, Assess) model to create the Cyber Kill Chain." },
+      { q:"What is a \"Payload\" in the context of the Weaponization phase?", opts:["The money paid to the hacker","The malicious code designed to perform an action on the target","The weight of the server","A type of secure password"], correct:1, anchor:"A payload is the malicious code component of the weapon — it's what actually executes on the target to steal data, encrypt files, or create a backdoor." },
+      { q:"True or False: The Cyber Kill Chain helps organizations pinpoint vulnerabilities and implement targeted defenses.", opts:["True","False"], correct:0, anchor:"The Kill Chain's stage-by-stage breakdown lets defenders map their security controls to specific attack phases and identify coverage gaps." },
+      { q:"True or False: Effective defense requires different detection techniques for each stage of the kill chain.", opts:["True","False"], correct:0, anchor:"Each Kill Chain stage requires different defensive tools: email filtering for Delivery, behavioral analysis for Installation, firewall for C2, etc." },
+      { q:"True or False: Advanced persistent threats (APTs) often move through these stages over a long period to remain undetected.", opts:["True","False"], correct:0, anchor:"APTs are defined by patience — they move slowly through Kill Chain stages over months or years, using stealth to avoid detection until their objective is achieved." },
+      { q:"Which of the following are benefits of using the Cyber Kill Chain model?", opts:["It provides a structured approach to understanding attacks","It helps in choosing specific mitigation controls for each phase","It improves incident response coordination","All of the above"], correct:3, anchor:"The Kill Chain delivers three key benefits: structured attack understanding, phase-specific mitigations, and improved incident response coordination." },
+      { q:"Effective defense involves which of the following actions at various stages?", opts:["Network monitoring during reconnaissance","Email filtering during delivery","Behavioral analysis during installation","All of the above"], correct:3, anchor:"Layered defense maps specific controls to each Kill Chain stage: network monitoring (recon), email filtering (delivery), behavioral analysis (installation)." },
+      { q:"What can happen if an attacker successfully completes the Actions on Objectives stage?", opts:["Data theft or exfiltration","Destruction or encryption of critical files (Ransomware)","Damage to the organization's reputation","All of the above"], correct:3, anchor:"If an attacker reaches 'Actions on Objectives,' the consequences are severe: data stolen, files encrypted, and lasting reputational damage — all three." },
+    ]
+  },
+  {
+    name: "Chapter 9 — Penetration Testing Methodology",
+    questions: [
+      { q:"What is the primary purpose of a penetration test?", opts:["To break a computer for fun","To proactively identify vulnerabilities before malicious actors do","To slow down a company's network","To delete all the files on a server"], correct:1, anchor:"A pentest's core purpose is proactive security validation — finding real exploitable vulnerabilities before attackers discover them through a simulated attack." },
+      { q:"Which phase of the penetration testing methodology involves defining the \"Rules of Engagement\"?", opts:["Exploitation","Pre-engagement Interactions","Reporting","Post-Exploitation"], correct:1, anchor:"Pre-engagement defines the scope, objectives, timeline, and Rules of Engagement — establishing the legal and operational boundaries of the test." },
+      { q:"What is the main goal of the Intelligence Gathering phase?", opts:["To write the final report","To collect target data through reconnaissance and scanning","To fix the system's bugs","To interview the CEO"], correct:1, anchor:"Intelligence Gathering (recon + scanning) builds a comprehensive picture of the target's systems, personnel, and potential attack vectors." },
+      { q:"In the Vulnerability Analysis phase, what is the tester trying to detect?", opts:["The number of employees in the office","Exploitable weaknesses using automated scanners and manual review","The speed of the internet connection","The brand of the computers"], correct:1, anchor:"Vulnerability Analysis uses automated tools (Nessus, OpenVAS) and manual techniques to find and validate exploitable weaknesses in the target." },
+      { q:"What happens during the Exploitation phase?", opts:["The tester gives up","The tester attempts to breach the system","The tester installs new antivirus software","The tester changes the company's website"], correct:1, anchor:"Exploitation is where theory becomes practice — the tester actively attempts to exploit identified vulnerabilities to gain unauthorized access." },
+      { q:"What is a key activity during Post-Exploitation?", opts:["Finding the company's office address","Assessing impact and maintaining access","Printing the final report","Deleting the tester's own tools"], correct:1, anchor:"Post-exploitation assesses the real-world impact of a breach: how far can the attacker move, what can they access, and what damage could they cause?" },
+      { q:"Why are Remediation Recommendations included in a report?", opts:["To make the report look longer","To provide clear, actionable steps to improve security","To show that the tester is very smart","To confuse the network administrator"], correct:1, anchor:"Remediation recommendations translate technical findings into actionable fixes — they're the 'so what, now what' section that gives the client a path forward." },
+      { q:"A professional penetration testing report should include which of the following?", opts:["Executive Summary and Detailed Findings","Risk Ratings","Remediation Recommendations","All of the above"], correct:3, anchor:"A complete pentest report requires: Executive Summary (for management), Detailed Findings (for technical teams), Risk Ratings, and Remediation steps." },
+      { q:"To ensure a thorough assessment, a penetration test should use:", opts:["Only automated tools","A mix of automated tools and manual testing","Only manual guessing","No tools at all"], correct:1, anchor:"Best-practice pentesting combines automated tools (speed, coverage) with manual testing (creativity, logic) to find vulnerabilities neither approach catches alone." },
+      { q:"When is the best time to conduct a penetration test?", opts:["Only once a decade","Regularly and after major system changes","Only when the company is losing money","Only on holidays"], correct:1, anchor:"Pentests should be regular (annual at minimum) and triggered by major changes — new systems, acquisitions, or significant infrastructure updates." },
+      { q:"What is \"Counter-audit\" or follow-up testing?", opts:["Testing the system before the actual hack","Validating that identified fixes were implemented correctly","Checking the tester's bank account","Auditing the company's taxes"], correct:1, anchor:"Counter-audit (retest/follow-up testing) verifies that the vulnerabilities identified in the original pentest have been correctly remediated." },
+      { q:"Which phase involves reporting findings with clear remediation recommendations?", opts:["Intelligence Gathering","Reporting","Exploitation","Pre-engagement"], correct:1, anchor:"The Reporting phase transforms raw findings into a structured document with risk ratings, evidence, and prioritized remediation recommendations." },
+      { q:"According to the \"Future of Penetration Testing\", what is expected to accelerate vulnerability discovery?", opts:["Manual spreadsheets","AI-powered pentesting tools","Slower internet speeds","Using less software"], correct:1, anchor:"AI-powered pentesting tools are the future — they accelerate vulnerability discovery by automating complex attack chains and pattern recognition." },
+      { q:"What does \"fortifying security posture\" mean?", opts:["Buying more office chairs","Strengthening defenses and closing critical security gaps","Changing the company logo","Hiring more sales people"], correct:1, anchor:"Fortifying security posture means systematically strengthening defenses by closing the gaps and vulnerabilities identified through testing." },
+      { q:"True or False: Penetration testing proactively identifies vulnerabilities by simulating real-world attack scenarios.", opts:["True","False"], correct:0, anchor:"Pentesting's power lies in simulation — it replicates real attack techniques in a controlled way to find vulnerabilities before real attackers do." },
+      { q:"True or False: Establishing clear communication channels between security teams and developers enhances rapid remediation.", opts:["True","False"], correct:0, anchor:"Clear DevSecOps communication channels ensure that pentest findings are quickly routed to the right teams and remediated without bureaucratic delays." },
+      { q:"True or False: Defining a clear scope and objectives with stakeholders is a best practice for effective testing.", opts:["True","False"], correct:0, anchor:"A clear, agreed-upon scope prevents scope creep, protects the tester legally, and ensures the test focuses on the highest-priority assets." },
+      { q:"Why does penetration testing matter in today's world?", opts:["Cyberattacks cost businesses trillions of dollars","Most breaches exploit known vulnerabilities","Regulatory mandates like HIPAA require it","All of the above"], correct:3, anchor:"Pentesting is mandated by economics (trillion-dollar losses), technical reality (most breaches use known flaws), and regulation (HIPAA, PCI-DSS, etc.)." },
+      { q:"A professional penetration testing report should include which of the following?", opts:["Executive Summary and Detailed Findings","Risk Ratings","Remediation Recommendations","All of the above"], correct:3, anchor:"A professional pentest report is multi-layered: an executive summary for leadership, detailed findings for engineers, and clear remediation steps for both." },
+      { q:"The core phases of a penetration testing methodology include:", opts:["Pre-engagement and Intelligence Gathering","Threat Modeling and Vulnerability Analysis","Exploitation, Post-Exploitation, and Reporting","All of the above"], correct:3, anchor:"A complete pentest methodology spans all phases: Pre-engagement, Intel Gathering, Threat Modeling, Vuln Analysis, Exploitation, Post-Exploitation, and Reporting." },
+    ]
+  },
+  {
+    name: "Chapter 10 — Hacking & Web Security",
+    questions: [
+      { q:"how is \"Hacking\" defined?", opts:["Fixing a broken hardware component","Attempting to gain unauthorized access to computer resources","Writing a new software application from scratch","Buying a new server for the office"], correct:1, anchor:"Hacking is defined as attempting to gain unauthorized access to computer systems, networks, or data — authorization is the key distinction." },
+      { q:"What is the main difference between a hacker and an ethical hacker?", opts:["The specific brand of computer they use","Ethical hackers have the owner's permission to test the system","Hackers only work during the night","Ethical hackers do not use any tools"], correct:1, anchor:"The single defining difference is written permission — ethical hackers do exactly what malicious hackers do, but with explicit authorization from the owner." },
+      { q:"Which stage of the hacking cycle involves scanning the network to find live hosts and open ports?", opts:["Footprinting","Scanning","Enumeration","Covering Tracks"], correct:1, anchor:"Scanning (Stage 2) uses tools like Nmap to discover live hosts, open ports, running services, and OS versions on the target network." },
+      { q:"What is the purpose of \"Escalating Privilege\" after gaining initial access?", opts:["To get a faster internet connection","To gain higher-level permissions, such as administrator or root rights","To change the computer's wallpaper","To send an email to every contact in the address book"], correct:1, anchor:"Privilege Escalation elevates a low-privilege foothold into administrator or root access, unlocking full control of the compromised system." },
+      { q:"Why does an attacker want to \"Cover Tracks\"?", opts:["To make the computer run more efficiently","To hide evidence of their unauthorized access and activity","To save space on the hard drive","To update the system's antivirus software"], correct:1, anchor:"Covering tracks (deleting logs, clearing event history, modifying timestamps) erases forensic evidence, making attribution and incident response harder." },
+      { q:"Which organization creates the \"Top 10\" list of the most critical web security risks?", opts:["Microsoft","OWASP","Google","NASA"], correct:1, anchor:"OWASP (Open Web Application Security Project) publishes the OWASP Top 10 — the definitive guide to the most critical web application security risks." },
+      { q:"What does the acronym \"XSS\" stand for?", opts:["XML Security Suite","Cross-Site Scripting","X-Ray Search System","Extra Secure Script"], correct:1, anchor:"XSS = Cross-Site Scripting. It's a web vulnerability where attackers inject malicious scripts into trusted websites to execute in victims' browsers." },
+      { q:"In a Cross-Site Scripting (XSS) attack, where does the malicious script actually run?", opts:["On the attacker's own computer","In the victim's web browser","On the main database server","Inside a physical hardware firewall"], correct:1, anchor:"XSS scripts execute in the victim's browser — the attacker injects code into a trusted site and the victim's browser runs it, trusting the source." },
+      { q:"What is the main risk associated with a \"File Upload Vulnerability\"?", opts:["The file might take too long to upload","An attacker could upload and execute malicious code on the server","The file name might be too long for the system","The website might run out of storage space"], correct:1, anchor:"An unrestricted file upload allows attackers to upload web shells or malicious scripts and execute them on the server, gaining full control." },
+      { q:"Which of these is a valid countermeasure for a File Upload Vulnerability?", opts:["Changing the background color of the upload page","Scanning files for malware and verifying they are an allowed file type","Moving the server to a different physical location","Using a larger computer monitor"], correct:1, anchor:"Defending against file upload vulnerabilities requires: scanning uploads for malware, whitelisting allowed file types, and storing files outside the web root." },
+      { q:"What is the danger of \"A10: Insufficient Logging & Monitoring\"?", opts:["Having too many log files taking up space","Not recording or watching security events","Using a screen that is too small to see the logs","Forgetting to turn on the office printer"], correct:1, anchor:"Insufficient logging means attacks go undetected — without logs and monitoring, organizations can't detect breaches, investigate incidents, or respond in time." },
+      { q:"What is the primary risk of \"A3: Sensitive Data Exposure\"?", opts:["The website might load a bit slower than usual","Attackers gain access to private data","The website has a bright color scheme","The server uses more electricity than planned"], correct:1, anchor:"Sensitive Data Exposure occurs when private data (PII, credentials, payment info) is stored or transmitted without adequate encryption or access controls." },
+      { q:"What should be used to protect sensitive cookies from being stolen by malicious scripts?", opts:["A simple password manager","The HttpOnly flag","A plastic screen protector","A more powerful processor"], correct:1, anchor:"The HttpOnly cookie flag prevents client-side scripts (including XSS malware) from accessing cookie values, protecting session tokens from theft." },
+      { q:"Which of the following are recognized stages in the Hacking Life Cycle?", opts:["Footprinting","Enumeration","Gaining Access","All of the above"], correct:3, anchor:"The Hacking Life Cycle includes: Footprinting → Scanning → Enumeration → Gaining Access → Escalation → Maintaining Access → Covering Tracks." },
+      { q:"Which of these are effective ways to secure a web application during its lifecycle?", opts:["Threat modeling","Security architecture and design review","Using vulnerability assessment tools","All of the above"], correct:3, anchor:"Secure SDLC integrates security at every stage: threat modeling in design, security reviews in architecture, and VA tools throughout development." },
+      { q:"What are common and effective countermeasures to prevent XSS attacks?", opts:["Sanitize HTML input","Use a Content Security Policy (CSP)","Use proper output escaping or encoding","All of the above"], correct:3, anchor:"XSS prevention requires three layers: input sanitization (clean incoming data), output encoding (safe rendering), and CSP headers (block inline scripts)." },
+      { q:"True or False: Footprinting is the process of gathering as much information as possible about a target organization.", opts:["True","False"], correct:0, anchor:"Footprinting is the systematic process of collecting maximum information about a target — its domain, network, employees, technologies, and vulnerabilities." },
+      { q:"True or False: Penetration testing is performed to find security flaws before real attackers can discover and exploit them.", opts:["True","False"], correct:0, anchor:"Pentesting is fundamentally a race — find the vulnerabilities before the bad guys do, so you can fix them before they can be weaponized." },
+      { q:"True or False: An ethical hacker performs the same activities as a malicious hacker but always with the owner's permission.", opts:["True","False"], correct:0, anchor:"Ethical hackers use identical techniques and tools as malicious hackers — the sole difference is written authorization from the system owner." },
+      { q:"What is the main goal of the \"Scanning\" phase in the hacking cycle?", opts:["To print a copy of the website's homepage","To find live systems, IP addresses, and open ports on a network","To clean the dust off the computer's screen","To take a screenshot of the server's desktop"], correct:1, anchor:"Scanning maps the live attack surface: which IPs are active, which ports are open, which services are running, and what OS is in use." },
+    ]
+  }
+];
+
+/* ============================================================
+   QUIZ STATE
+   ============================================================ */
+let activeQuestions = [];
+let currentIndex    = 0;
+let score           = 0;
+let answered        = 0;
+let autoTimer       = null;
+let selectedChapters = new Set();
+
+/* ============================================================
+   CHAPTER SELECT SCREEN
+   ============================================================ */
+function buildChapterSelect() {
+  const grid = document.getElementById('chapterGrid');
+  CHAPTERS.forEach((ch, i) => {
+    const card = document.createElement('div');
+    card.className = 'ch-card';
+    card.dataset.idx = i;
+    card.innerHTML = `
+      <div class="ch-num">CHAPTER ${i+1}</div>
+      <div class="ch-title">${ch.name.split('—')[1]?.trim() || ch.name}</div>
+      <div class="ch-count">${ch.questions.length} questions</div>
+    `;
+    card.onclick = () => toggleChapter(i, card);
+    grid.appendChild(card);
+  });
+}
+
+function toggleChapter(idx, card) {
+  if (selectedChapters.has(idx)) {
+    selectedChapters.delete(idx);
+    card.classList.remove('selected');
+  } else {
+    selectedChapters.add(idx);
+    card.classList.add('selected');
+  }
+}
+
+function startQuiz(mode) {
+  let pool = [];
+  if (mode === 'all') {
+    CHAPTERS.forEach(ch => pool.push(...ch.questions.map(q => ({...q, chapter: ch.name}))));
+  } else {
+    if (selectedChapters.size === 0) {
+      CHAPTERS.forEach(ch => pool.push(...ch.questions.map(q => ({...q, chapter: ch.name}))));
+    } else {
+      selectedChapters.forEach(i => {
+        CHAPTERS[i].questions.forEach(q => pool.push({...q, chapter: CHAPTERS[i].name}));
+      });
+    }
+  }
+
+  // Shuffle questions
+  activeQuestions = pool.sort(() => Math.random() - 0.5);
+  currentIndex = 0; score = 0; answered = 0;
+
+  document.getElementById('chapter-select').style.display = 'none';
+  document.getElementById('progressWrap').style.display   = 'flex';
+  document.getElementById('quizArea').style.display       = 'block';
+  document.getElementById('results').style.display        = 'none';
+
+  renderQuestion();
+}
+
+/* ============================================================
+   RENDER QUESTION
+   ============================================================ */
+const LETTERS = ['A','B','C','D','E'];
+
+function renderQuestion() {
+  if (currentIndex >= activeQuestions.length) { showResults(); return; }
+
+  const q = activeQuestions[currentIndex];
+  const total = activeQuestions.length;
+
+  // Progress
+  document.getElementById('progressLabel').textContent = `Question ${currentIndex+1} of ${total}`;
+  document.getElementById('scoreLive').textContent     = `Score: ${score}`;
+  document.getElementById('barFill').style.width       = `${(currentIndex/total)*100}%`;
+
+  // Chapter badge
+  document.getElementById('chapterBadge').textContent = q.chapter || '';
+
+  // Q text & number
+  document.getElementById('qNumber').textContent = `Q${currentIndex+1}`;
+  document.getElementById('qText').textContent   = q.q;
+
+  // Reset anchor
+  const anchor = document.getElementById('anchor');
+  anchor.style.display = 'none';
+  document.getElementById('anchorText').textContent = q.anchor || '';
+
+  // Timer bar reset
+  const tb = document.getElementById('timerBar');
+  tb.style.transition = 'none';
+  tb.style.width = '0%';
+
+  // Shuffle options
+  const indices = q.opts.map((_,i) => i);
+  const shuffled = indices.sort(() => Math.random() - 0.5);
+
+  const optContainer = document.getElementById('options');
+  optContainer.innerHTML = '';
+
+  shuffled.forEach((origIdx, displayPos) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.dataset.origIdx = origIdx;
+    div.dataset.correct = (origIdx === q.correct) ? 'true' : 'false';
+
+    div.innerHTML = `
+      <div class="opt-label">${LETTERS[displayPos]}</div>
+      <div class="opt-text">${q.opts[origIdx]}</div>
+      <div class="opt-icon">${origIdx === q.correct ? '✓' : '✗'}</div>
+    `;
+    div.onclick = () => handleAnswer(div, q);
+    optContainer.appendChild(div);
+  });
+
+  // Animate card in
+  const card = document.getElementById('card');
+  card.style.animation = 'none';
+  card.offsetHeight; // reflow
+  card.style.animation = 'fadeSlideIn .35s ease both';
+}
+
+/* ============================================================
+   HANDLE ANSWER
+   ============================================================ */
+function handleAnswer(clickedDiv, q) {
+  // Lock all options
+  const allOpts = document.querySelectorAll('.opt');
+  allOpts.forEach(o => o.classList.add('locked'));
+
+  const isCorrect = clickedDiv.dataset.correct === 'true';
+  if (isCorrect) {
+    score++;
+    clickedDiv.classList.add('correct');
+  } else {
+    clickedDiv.classList.add('wrong');
+    // highlight the correct one
+    allOpts.forEach(o => {
+      if (o.dataset.correct === 'true') o.classList.add('correct');
+    });
+  }
+  answered++;
+
+  // Show memory anchor
+  const anchor = document.getElementById('anchor');
+  anchor.style.display = 'block';
+
+  // Start timer bar
+  const tb = document.getElementById('timerBar');
+  requestAnimationFrame(() => {
+    tb.style.transition = 'width 1.7s linear';
+    tb.style.width = '100%';
+  });
+
+  // Auto-advance
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => {
+    currentIndex++;
+    renderQuestion();
+  }, 1850);
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+function showResults() {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('quizArea').style.display     = 'none';
+  const r = document.getElementById('results');
+  r.style.display = 'block';
+
+  const pct = Math.round((score / activeQuestions.length) * 100);
+  document.getElementById('scorePercent').textContent = pct;
+  document.getElementById('statCorrect').textContent  = score;
+  document.getElementById('statWrong').textContent    = activeQuestions.length - score;
+  document.getElementById('statTotal').textContent    = activeQuestions.length;
+
+  let grade, trophy;
+  if (pct >= 90)      { grade='Outstanding! 🔥 A+'; trophy='🏆'; }
+  else if (pct >= 80) { grade='Excellent work! A';   trophy='🥇'; }
+  else if (pct >= 70) { grade='Good job! B';          trophy='🎯'; }
+  else if (pct >= 60) { grade='Passing grade. C';     trophy='📚'; }
+  else                { grade='Keep studying! 💪';    trophy='🔄'; }
+
+  document.getElementById('trophy').textContent      = trophy;
+  document.getElementById('resultsTitle').textContent = grade;
+  document.getElementById('resultsGrade').textContent = `You answered ${score} of ${activeQuestions.length} questions correctly.`;
+}
+
+function resetToMenu() {
+  document.getElementById('results').style.display        = 'none';
+  document.getElementById('chapter-select').style.display = 'block';
+  selectedChapters.clear();
+  document.querySelectorAll('.ch-card').forEach(c => c.classList.remove('selected'));
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+buildChapterSelect();
+</script>
+</body>
+</html>
