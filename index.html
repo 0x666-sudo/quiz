@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Risk &amp; Security Fundamentals Quiz 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:        #0d0f14;
+    --surface:   #161b25;
+    --surface2:  #1e2536;
+    --border:    #2a3349;
+    --text:      #dde3f0;
+    --muted:     #6b7a9e;
+    --accent:    #4f8ef7;
+    --green:     #2ecc71;
+    --red:       #e74c3c;
+    --green-bg:  rgba(46,204,113,.12);
+    --red-bg:    rgba(231,76,60,.12);
+    --radius:    14px;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Syne', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 60px;
+  }
+  .header {
+    width: 100%;
+    max-width: 780px;
+    padding: 36px 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .header .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    text-align: center;
+  }
+  .header h1 span { color: var(--accent); }
+  .progress-wrap {
+    width: 100%;
+    max-width: 780px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .progress-meta .score-live { color: var(--green); }
+  .bar-bg {
+    width: 100%;
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 99px;
+    transition: width .45s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .chapter-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .15em;
+    color: var(--accent);
+    background: rgba(79,142,247,.1);
+    border: 1px solid rgba(79,142,247,.25);
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .card {
+    width: 100%;
+    max-width: 780px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 40px 32px;
+    position: relative;
+    animation: fadeSlideIn .35s ease both;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: .1em;
+  }
+  .q-text {
+    font-size: clamp(16px, 2.5vw, 18px);
+    font-weight: 700;
+    line-height: 1.55;
+    margin-bottom: 28px;
+    letter-spacing: -.01em;
+  }
+  .options { display: flex; flex-direction: column; gap: 11px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .12s;
+    position: relative;
+    overflow: hidden;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--accent);
+    background: rgba(79,142,247,.07);
+    transform: translateX(3px);
+  }
+  .opt.locked { cursor: default; }
+  .opt-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .18s, border-color .18s, color .18s;
+  }
+  .opt-text {
+    font-size: 14px;
+    line-height: 1.45;
+    flex: 1;
+  }
+  .opt-icon {
+    font-size: 18px;
+    margin-left: auto;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .opt.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    animation: pulse-green .35s ease;
+  }
+  .opt.correct .opt-label {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+  .opt.correct .opt-icon { opacity: 1; color: var(--green); }
+  .opt.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    animation: pulse-red .35s ease;
+  }
+  .opt.wrong .opt-label {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .opt.wrong .opt-icon { opacity: 1; color: var(--red); }
+  @keyframes pulse-green {
+    0%   { box-shadow: 0 0 0 0 rgba(46,204,113,.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(46,204,113,0); }
+    100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+  }
+  @keyframes pulse-red {
+    0%   { box-shadow: 0 0 0 0 rgba(231,76,60,.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(231,76,60,0); }
+    100% { box-shadow: 0 0 0 0 rgba(231,76,60,0); }
+  }
+  .anchor {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: rgba(79,142,247,.07);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    display: none;
+    animation: fadeSlideIn .3s ease both;
+  }
+  .anchor strong {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing:.1em;
+    display:block;
+    margin-bottom:4px;
+  }
+  .timer-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 0 0 var(--radius) var(--radius);
+    transition: width 1.6s linear;
+  }
+  .results {
+    width: 100%;
+    max-width: 780px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 52px 40px;
+    text-align: center;
+    animation: fadeSlideIn .4s ease both;
+    display: none;
+  }
+  .results .trophy { font-size: 62px; margin-bottom: 20px; display:block; }
+  .results h2 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 10px; }
+  .results .score-big {
+    font-family: var(--mono);
+    font-size: clamp(52px,10vw,80px);
+    font-weight: 700;
+    line-height: 1;
+    margin: 24px 0;
+  }
+  .results .score-big span { color: var(--accent); }
+  .results .grade { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 12px;
+  }
+  .stat-box .val {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    display: block;
+  }
+  .stat-box .val.green { color: var(--green); }
+  .stat-box .val.red   { color: var(--red);   }
+  .stat-box .val.blue  { color: var(--accent); }
+  .stat-box .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; display: block; letter-spacing: .07em; }
+  .btn-restart {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 36px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: .03em;
+    transition: background .18s, transform .12s;
+  }
+  .btn-restart:hover { background: #6aa0ff; transform: translateY(-1px); }
+  #chapter-select {
+    width: 100%;
+    max-width: 780px;
+    animation: fadeSlideIn .35s ease both;
+  }
+  #chapter-select h2 {
+    font-size: clamp(20px,4vw,26px);
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -.02em;
+  }
+  #chapter-select p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .ch-card {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .12s;
+    position: relative;
+  }
+  .ch-card:hover { border-color: var(--accent); background: rgba(79,142,247,.07); transform: translateY(-2px); }
+  .ch-card .ch-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: .12em;
+  }
+  .ch-card .ch-title { font-size: 14px; font-weight: 700; line-height: 1.4; }
+  .ch-card .ch-count { font-size: 12px; color: var(--muted); margin-top: 8px; font-family: var(--mono); }
+  .ch-card.selected { border-color: var(--accent); background: rgba(79,142,247,.12); }
+  .ch-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 12px; right: 14px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .btn-start-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .18s, transform .12s;
+    margin-right: 12px;
+    margin-top: 4px;
+  }
+  .btn-start-all:hover { background: #6aa0ff; transform: translateY(-1px); }
+  .btn-start-sel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .18s, transform .12s;
+    margin-top: 4px;
+  }
+  .btn-start-sel:hover { background: rgba(79,142,247,.1); transform: translateY(-1px); }
+  @media (max-width: 560px) {
+    .card { padding: 24px 20px 20px; }
+    .results { padding: 36px 22px; }
+    .stats-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="eyebrow">▸ Interactive Study Tool</span>
+  <h1>Risk &amp; Security Fundamentals <span>QB 2026</span></h1>
+</div>
+
+<!-- CHAPTER SELECT -->
+<div id="chapter-select">
+  <h2>Select Chapters</h2>
+  <p>Choose which chapters to include, or start all at once.</p>
+  <div class="chapter-grid" id="chapterGrid"></div>
+  <button class="btn-start-all" onclick="startQuiz('all')">▶ Start All Chapters</button>
+  <button class="btn-start-sel" onclick="startQuiz('selected')">Start Selected</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-meta">
+    <span id="progressLabel">Question 1 of 0</span>
+    <span class="score-live" id="scoreLive">Score: 0</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<!-- QUIZ CARD -->
+<div id="quizArea" style="display:none">
+  <div class="chapter-badge" id="chapterBadge">Chapter 1</div>
+  <div class="card" id="card">
+    <div class="q-number" id="qNumber">Q1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="options"></div>
+    <div class="anchor" id="anchor"><strong>📌 MEMORY ANCHOR</strong><span id="anchorText"></span></div>
+    <div class="timer-bar" id="timerBar"></div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+  <span class="trophy" id="trophy">🎯</span>
+  <h2 id="resultsTitle">Quiz Complete!</h2>
+  <p class="grade" id="resultsGrade"></p>
+  <div class="score-big"><span id="scorePercent">0</span>%</div>
+  <div class="stats-grid">
+    <div class="stat-box"><span class="val green" id="statCorrect">0</span><span class="lbl">Correct</span></div>
+    <div class="stat-box"><span class="val red"   id="statWrong">0</span><span class="lbl">Wrong</span></div>
+    <div class="stat-box"><span class="val blue"  id="statTotal">0</span><span class="lbl">Total Q's</span></div>
+  </div>
+  <button class="btn-restart" onclick="resetToMenu()">↩ Back to Menu</button>
+</div>
+
+<script>
+const CHAPTERS = [
+  {
+    name: "Chapter 1 — Risk, CIA Triad & Controls",
+    questions: [
+      { q:"What is the standard \"Risk Equation\" used to calculate the level of risk?", opts:["Risk = Asset + Security","Risk = Threat × Vulnerability × Impact","Risk = Software + Hardware","Risk = Password × Encryption"], correct:1, anchor:"Risk = Threat × Vulnerability × Impact. All three elements must be present for risk to exist — removing any one breaks the equation." },
+      { q:"In cybersecurity, what is a \"Vulnerability\"?", opts:["A person who attacks a network","A weakness or gap in a system's protection","A type of expensive antivirus software","The total value of a company's data"], correct:1, anchor:"A vulnerability is a weakness or gap in protection. Threats exploit vulnerabilities to cause harm — no vulnerability, no exploitable risk." },
+      { q:"Which part of the CIA Triad ensures that only authorized entities can access sensitive information?", opts:["Availability","Integrity","Confidentiality","Accountability"], correct:2, anchor:"Confidentiality = restricting access to authorized users only. Think encryption, access controls, and need-to-know policies." },
+      { q:"Which risk treatment strategy involves transferring financial consequences to a third party, such as an insurance provider?", opts:["Risk Avoidance","Risk Mitigation","Risk Acceptance","Risk Transfer"], correct:3, anchor:"Risk Transfer shifts financial consequences to a third party (e.g., cyber insurance). The risk still exists, but someone else bears the cost." },
+      { q:"Which of the following is categorized as an \"Environmental Threat\"?", opts:["Hackers or APT groups","Malware and ransomware","Fire, flood, or power failure","Policy gaps and process flaws"], correct:2, anchor:"Environmental threats are natural or physical events — fire, flood, earthquake, power failure — outside the control of software or people." },
+      { q:"What does the \"I\" in the CIA Triad stand for?", opts:["Internet","Integrity","Identification","Infrastructure"], correct:1, anchor:"CIA = Confidentiality, Integrity, Availability. Integrity ensures data is accurate, complete, and unaltered by unauthorized parties." },
+      { q:"If an organization completely avoids the activity that creates a risk, which strategy are they using?", opts:["Risk Mitigation","Risk Acceptance","Risk Avoidance","Risk Transfer"], correct:2, anchor:"Risk Avoidance eliminates the risk by stopping the activity that creates it entirely — the most extreme but sometimes necessary strategy." },
+      { q:"Which type of security control is designed to prevent threats before they materialize?", opts:["Detective Control","Preventive Control","Corrective Control","Recovery Control"], correct:1, anchor:"Preventive controls stop threats before they happen: firewalls, MFA, access controls, and training all prevent attacks proactively." },
+      { q:"What is \"Phishing\"?", opts:["A technical hardware failure","A social engineering attack using deceptive communications","A method of encrypting database files","A way to speed up network traffic"], correct:1, anchor:"Phishing uses deceptive emails, messages, or websites to trick victims into revealing credentials or installing malware — it targets humans, not code." },
+      { q:"True or False: The three core principles of the CIA Triad consist of Confidentiality, Integrity, and Availability.", opts:["True","False"], correct:0, anchor:"CIA Triad = Confidentiality (access control), Integrity (data accuracy), Availability (system accessibility). These are the three pillars of information security." },
+      { q:"Which of these is an example of a technical \"Detective Control\"?", opts:["Firewalls","Intrusion Detection Systems (IDS)","Data backup and recovery","Security awareness training"], correct:1, anchor:"Detective controls identify threats after or during occurrence. IDS monitors traffic and alerts on suspicious patterns — it detects, not prevents." },
+      { q:"True or False: A key principle of risk management is that risk can never be fully eliminated; the goal is to reduce it to an acceptable level.", opts:["True","False"], correct:0, anchor:"Zero risk is impossible — residual risk always remains. The goal is reducing risk to an acceptable level that the organization can tolerate." },
+      { q:"Which \"Asset\" category includes employees, contractors, and knowledge holders?", opts:["Data Assets","Hardware Assets","People Assets","Reputation Assets"], correct:2, anchor:"People Assets are human resources — employees, contractors, and knowledge holders who carry institutional know-how and access privileges." },
+      { q:"In the CIA Triad, the principle of \"Availability\" ensures that:", opts:["Data is kept secret from everyone","Data is accurate and unaltered","Systems and data are accessible when needed","Software is free to use"], correct:2, anchor:"Availability ensures authorized users can access systems and data when needed. DDoS attacks and ransomware directly target availability." },
+      { q:"True or False: Risk is officially defined as the possibility that a threat will exploit a vulnerability in an asset and cause harm or loss to the organization.", opts:["True","False"], correct:0, anchor:"This is the formal risk definition: Threat + Vulnerability + Asset = Risk of harm or loss. All three components must align for risk to materialize." },
+      { q:"What is the definition of \"Malware\"?", opts:["Physical damage to a computer server","Malicious software designed to disrupt or damage systems","A legal regulation for data privacy","A business continuity strategy"], correct:1, anchor:"Malware = Malicious Software. Any program designed to infiltrate, disrupt, damage, or gain unauthorized access to systems falls under this definition." },
+      { q:"Which of the following is an example of an \"Internal Threat\"?", opts:["A natural disaster like an earthquake","An employee who misuses privileges","A foreign nation-state actor","An external professional hacker"], correct:1, anchor:"Internal threats originate from within the organization — an employee misusing access privileges is the classic insider threat example." },
+      { q:"Which of the following are considered components of the Risk Equation?", opts:["Threat","Vulnerability","Impact","All of the above"], correct:3, anchor:"Risk = Threat × Vulnerability × Impact. All three are required components. Remove any one and the risk equation collapses." },
+      { q:"Which strategies can an organization use during Step 4 (Risk Treatment) to handle identified risks?", opts:["Avoidance or Mitigation","Transfer","Acceptance","All of the above"], correct:3, anchor:"The four risk treatment strategies are: Avoid (stop the activity), Mitigate (reduce likelihood/impact), Transfer (insurance), Accept (live with it)." },
+      { q:"The \"Human Factor\" in cybersecurity emphasizes that:", opts:["Technology alone can eliminate all risks","Humans are often the weakest link in security","Only IT staff need security training","None of the above"], correct:1, anchor:"The human factor is the most exploited attack surface. Social engineering, phishing, and insider threats all target people, not technology." },
+      { q:"What are the primary objectives of implementing \"Preventive Controls\" in a security framework?", opts:["Using Firewalls and Anti-malware","Implementing Multi-Factor Authentication (MFA)","Establishing security awareness training and policies","All of the above"], correct:3, anchor:"Preventive controls work on three layers: technical (firewalls, MFA), administrative (policies), and human (training) — all three are needed." },
+    ]
+  },
+  {
+    name: "Chapter 2 — Insider Threats",
+    questions: [
+      { q:"What is the primary characteristic of an \"Insider Threat\"?", opts:["It always involves a hacker from another country.","It originates from individuals inside the organization.","It only involves physical theft of hardware.","It is always a technical glitch in the system."], correct:1, anchor:"Insider threats originate from people inside the organization — current employees, former staff, contractors, or business partners with internal access." },
+      { q:"Why are insider threats often considered more dangerous than external threats?", opts:["Insiders have better hacking tools than professionals.","Insiders already have legitimate access to systems.","External threats do not care about data.","Insiders are always more technically skilled."], correct:1, anchor:"Insiders are dangerous because they already have authorized access — they bypass the perimeter defenses that stop external attackers cold." },
+      { q:"Which of the following would be considered an \"Insider\"?", opts:["Current employees only.","Former employees and contractors.","Business partners and current employees.","All of the above."], correct:3, anchor:"Insiders include anyone with authorized access: current employees, former staff (still with credentials), contractors, and business partners." },
+      { q:"What defines a \"Malicious Insider\"?", opts:["An employee whose account was hacked by a virus.","An individual who unintentionally creates a security risk.","An individual who intentionally causes harm or steals data.","A competitor who has no access to the company."], correct:2, anchor:"A malicious insider acts with intent — they deliberately cause harm, steal data, or commit sabotage, driven by financial gain, revenge, or espionage." },
+      { q:"What are the common motivations behind an intentional insider attack?", opts:["Financial gain","Revenge against the organization","Corporate espionage or fraud","All of the above"], correct:3, anchor:"Malicious insiders are motivated by money (financial gain), emotion (revenge), or strategy (espionage/fraud) — all three are common drivers." },
+      { q:"Which of these security tools can help an organization detect or prevent insider threats?", opts:["User Activity Monitoring (UAM)","Security Information and Event Management (SIEM)","Data Loss Prevention (DLP)","All of the above"], correct:3, anchor:"A layered detection approach uses UAM (watches behavior), SIEM (analyzes logs), and DLP (prevents data exfiltration) together." },
+      { q:"An employee clicking a suspicious link because they weren't trained is an example of:", opts:["Revenge motivation.","Corporate espionage.","Lack of security awareness.","Malicious sabotage."], correct:2, anchor:"This is a negligent insider — not malicious, but untrained. Lack of security awareness is the most common cause of accidental insider incidents." },
+      { q:"Which of the following is a potential impact of a successful insider attack?", opts:["Data breaches.","Financial losses.","Operational disruption.","All of the above."], correct:3, anchor:"Insider attacks cause multi-dimensional damage: data is stolen (breach), money is lost (financial), and operations stop working (disruption)." },
+      { q:"What does \"Operational Disruption\" mean in the context of insider threats?", opts:["The company gains more customers.","Systems stop working properly and business is interrupted.","The company's stock price increases.","Employees get a bonus for reporting bugs."], correct:1, anchor:"Operational disruption means systems fail and business is interrupted — an insider sabotaging a critical server can halt company operations entirely." },
+      { q:"Which method involves monitoring what users do inside systems and networks?", opts:["Financial auditing.","Monitoring user activity.","Physical surveillance.","Hiring more contractors."], correct:1, anchor:"User Activity Monitoring (UAM) tracks what authorized users do inside systems — detecting anomalous behavior like unusual file access or large downloads." },
+      { q:"Which of these is a behavioral indicator of a possible insider threat?", opts:["Accessing unusual files not related to the job.","Logging in during standard business hours.","Deleting old personal emails.","Using a strong, unique password."], correct:0, anchor:"Accessing files unrelated to the job role is a red flag. Legitimate employees rarely need data outside their work scope — anomalies warrant investigation." },
+      { q:"What is the purpose of a SIEM (Security Information and Event Management) tool?", opts:["To prevent employees from talking to each other.","To collect and analyze security logs from multiple systems.","To encrypt all files on a personal laptop.","To replace the need for employee training."], correct:1, anchor:"SIEM aggregates logs from across the environment and analyzes them for suspicious patterns — providing a unified view of security events in real time." },
+      { q:"Which of the following are recognized types of insider threats?", opts:["Malicious Insider","Negligent Insider","Compromised Insider","All of the above"], correct:3, anchor:"The three insider threat types: Malicious (intentional harm), Negligent (accidental mistakes), Compromised (account hijacked by an outsider)." },
+      { q:"What is the \"Least Privilege Principle\"?", opts:["Giving all employees access to every file.","Employees only access what they need for their specific job.","Only the CEO has access to the internet.","Privilege is only given to the oldest employees."], correct:1, anchor:"Least Privilege limits access to only what's required for the job. It minimizes insider threat damage by containing the blast radius of any compromise." },
+      { q:"True or False: The \"Least Privilege Principle\" is a prevention strategy where employees are only given access to the specific data and systems they need to perform their jobs.", opts:["True","False"], correct:0, anchor:"Least Privilege is a foundational zero-trust principle — reduce standing access to the bare minimum needed for each role." },
+      { q:"True or False: A \"Compromised Insider\" occurs when an employee's account has been hacked and attackers use those stolen credentials to access internal systems.", opts:["True","False"], correct:0, anchor:"A compromised insider isn't malicious — their credentials were stolen. Attackers then impersonate them to access internal systems legitimately." },
+      { q:"What is a primary goal of \"Employee Training\" in cybersecurity?", opts:["To teach employees how to hack competitors.","To provide awareness of risks and safe digital practices.","To help employees find better-paying jobs.","To ensure employees never use a computer."], correct:1, anchor:"Security awareness training converts the human factor from the weakest link into an active defense layer — trained employees spot and report threats." },
+      { q:"Which action can help detect an insider downloading large amounts of data?", opts:["Increasing the office temperature.","Behavioral analysis and user activity monitoring.","Changing the company logo.","Reducing the number of servers."], correct:1, anchor:"Behavioral analytics detects anomalies like mass data downloads, unusual login times, or access to sensitive files outside normal patterns." },
+      { q:"Logging in at \"unusual times\" (like 3:00 AM) is an example of:", opts:["A highly productive employee.","A behavioral indicator of a potential threat.","A standard security practice.","A system update notification."], correct:1, anchor:"Unusual login times are a classic behavioral indicator. Legitimate employees rarely work at 3 AM — this anomaly warrants immediate investigation." },
+      { q:"True or False: Insider threats are a major cybersecurity challenge because they originate from individuals who already have authorized access to systems or data.", opts:["True","False"], correct:0, anchor:"Authorized access is what makes insiders so dangerous — they bypass perimeter defenses that block external attackers, making detection much harder." },
+      { q:"Which of these is a way to prevent insider threats?", opts:["Access control.","Security policies.","Employee training.","All of the above."], correct:3, anchor:"Preventing insider threats requires three layers: technical (access control), administrative (policies), and human (training) working together." },
+    ]
+  },
+  {
+    name: "Chapter 3 — Operational Risk Management",
+    questions: [
+      { q:"What is the definition of Operational Risk Management (ORM)?", opts:["A method for only managing stock market investments","A structured approach to identify, assess, monitor, and control risks from daily operations","A technical manual for fixing broken computer hardware","A government law for international trade"], correct:1, anchor:"ORM is a structured, continuous approach to managing risks arising from daily operations — people, processes, systems, and external events." },
+      { q:"In cybersecurity, what is the primary focus of ORM?", opts:["Managing employee vacation schedules","Protecting the Confidentiality, Integrity, and Availability (CIA) of information systems","Reducing the cost of office furniture","Marketing new products to customers"], correct:1, anchor:"ORM in cybersecurity protects the CIA triad of information systems — keeping data confidential, accurate, and accessible during daily operations." },
+      { q:"Which type of risk involves weak or poorly designed internal processes?", opts:["People Risk","System Risk","Process Risk","External Risk"], correct:2, anchor:"Process Risk arises from poorly designed, undocumented, or weak internal workflows — approval gaps, missing checks, or inefficient procedures." },
+      { q:"A server crash or a software bug is an example of which operational risk type?", opts:["Legal Risk","System / Technology Risk","Third-party Risk","Process Risk"], correct:1, anchor:"System/Technology Risk covers IT failures: server crashes, software bugs, hardware faults, and compatibility issues that disrupt operations." },
+      { q:"\"People Risk\" in an organization is most commonly caused by:", opts:["Natural disasters","Human error, negligence, or lack of training","Changes in government regulations","Software updates"], correct:1, anchor:"People Risk stems from the human factor — untrained employees making mistakes, negligent behavior, or deliberate misuse of access." },
+      { q:"What is an example of \"Third-Party Risk\"?", opts:["An employee forgetting their password","A cloud provider experiencing downtime that affects your organization","A flood damaging the main office","A power outage in the city"], correct:1, anchor:"Third-Party Risk is dependency risk — if your cloud provider, vendor, or partner fails, your operations are disrupted even though you did nothing wrong." },
+      { q:"Which of the following is considered an \"External Risk\"?", opts:["Poor documentation of internal steps","Natural disasters or cyberattacks from external hackers","Internal fraud by a manager","Inefficient approval processes"], correct:1, anchor:"External risks originate outside the organization: natural disasters, external cyberattacks, regulatory changes, and economic shifts are all external." },
+      { q:"What is the first step in the ORM process?", opts:["Risk Mitigation","Risk Identification","Risk Monitoring","Governance"], correct:1, anchor:"Risk Identification is always first — you cannot manage what you cannot see. Every ORM process begins by mapping all potential risks." },
+      { q:"What is the purpose of \"Risk Assessment and Analysis\"?", opts:["To ignore small risks","To evaluate likelihood and impact to prioritize risks","To hire new employees","To delete old data logs"], correct:1, anchor:"Risk Assessment evaluates each risk by likelihood (how probable?) and impact (how severe?) to create a priority list for mitigation efforts." },
+      { q:"\"Risk Mitigation\" involves which of the following actions?", opts:["Reporting a risk after it causes damage","Implementing controls like policies and safeguards to reduce risk","Closing the business to avoid all threats","Increasing the budget for marketing"], correct:1, anchor:"Risk Mitigation means implementing controls — firewalls, policies, training, encryption — to reduce the likelihood or impact of a risk occurring." },
+      { q:"What tool is used to prioritize risks based on Likelihood and Impact?", opts:["Internal Audit","Risk Matrix","Incident Report","Employee Survey"], correct:1, anchor:"A Risk Matrix plots risks on a grid of Likelihood vs. Impact, creating a visual heat map that guides which risks to address first." },
+      { q:"What is a major challenge to ORM involving employee behavior?", opts:["System downtime","Human resistance to new policies or technologies","High internet speeds","Accurate data collection"], correct:1, anchor:"Human resistance to change is the #1 behavioral challenge in ORM — employees often resist new controls that add friction to their daily work." },
+      { q:"How do \"Data Limitations\" affect ORM?", opts:["They make identifying and assessing risks more difficult","They make systems run faster","They reduce the cost of security","They prevent natural disasters"], correct:0, anchor:"Without quality data, risk identification and assessment are guesswork. Data limitations create blind spots in the risk management process." },
+      { q:"Why must ORM strategies be continuously updated?", opts:["Because risks are constantly evolving due to technology and regulations","Because managers like to change rules often","Because it is required for social media presence","Because software never breaks"], correct:0, anchor:"The threat landscape evolves constantly — new technologies, regulations, attack techniques, and business changes all require ORM strategy updates." },
+      { q:"True or False: ORM helps organizations follow laws and industry standards by monitoring risks and applying proper controls.", opts:["True","False"], correct:0, anchor:"ORM supports compliance by embedding risk controls that align with legal requirements — making regulatory compliance a natural outcome of good risk management." },
+      { q:"True or False: Operational risks arise from failures in processes, systems, people, or external events.", opts:["True","False"], correct:0, anchor:"The four ORM risk sources are: Processes (workflow failures), Systems (tech failures), People (human errors), and External Events (disasters, attacks)." },
+      { q:"True or False: An effective ORM framework ensures that risk management is an ongoing process integrated into daily operations.", opts:["True","False"], correct:0, anchor:"ORM must be continuous and embedded into daily operations — not a one-time audit but a living process that evolves with the organization." },
+      { q:"Which of the following are benefits of an effective ORM process?", opts:["Reducing financial loss and fines","Preventing business disruptions and downtime","Improving decision-making for managers","All of the above"], correct:3, anchor:"Effective ORM delivers three key benefits: financial savings (fewer incidents/fines), operational stability (less downtime), and better management decisions." },
+      { q:"What are the common sources of operational risk identified in the lecture?", opts:["People and Processes","Systems","External Events","All of the above"], correct:3, anchor:"ORM addresses four risk sources: People (human error), Processes (workflow gaps), Systems (tech failures), and External Events (disasters)." },
+      { q:"Which of the following are components of an effective ORM framework?", opts:["Risk Identification and Assessment","Risk Monitoring and Control","Governance, Accountability, and Continuous Improvement","All of the above"], correct:3, anchor:"A complete ORM framework requires all three layers: identify/assess risks, monitor/control them, and govern the whole process with accountability." },
+    ]
+  },
+  {
+    name: "Chapter 4 — SQL Injection",
+    questions: [
+      { q:"What is the primary goal of an SQL Injection attack?", opts:["To make the website load faster","To gain unauthorized access to a database","To change the color of the website's background","To upgrade the server's hardware"], correct:1, anchor:"SQL Injection's primary goal is unauthorized database access — reading, modifying, or deleting data by injecting malicious SQL commands." },
+      { q:"Where do attackers typically inject malicious SQL statements?", opts:["In the computer's power supply","In input fields like login forms or search boxes","In the physical cables of the network","In the printer's settings"], correct:1, anchor:"Input fields (login forms, search boxes, URL parameters) are SQLi injection points — anywhere user input is passed to a database query without sanitization." },
+      { q:"SQL Injection occurs when user input is not properly:", opts:["Printed on paper","Validated or sanitized","Deleted immediately","Translated into French"], correct:1, anchor:"SQLi occurs when input is not validated or sanitized — the application blindly passes user input into SQL queries, allowing attackers to modify the query." },
+      { q:"When a vulnerability exists, the application treats user input as part of the:", opts:["Image file","SQL command itself","User's profile picture","Help documentation"], correct:1, anchor:"The core SQLi vulnerability: the application treats user input as executable SQL code rather than plain data — mixing data and commands is the fatal flaw." },
+      { q:"Which tool is \"one of the most popular\" for automatically detecting and exploiting SQLi?", opts:["Notepad","SQLmap","Paint","Excel"], correct:1, anchor:"SQLmap is the industry-standard open-source tool that automatically detects and exploits SQL injection vulnerabilities in web applications." },
+      { q:"What does Burp Suite allow a security professional to do?", opts:["Write an email to the database","Intercept HTTP requests and modify parameters","Shut down the entire internet","Increase the server's RAM"], correct:1, anchor:"Burp Suite is a web security proxy that intercepts HTTP/HTTPS requests, allowing testers to inspect and modify parameters before they reach the server." },
+      { q:"Which open-source tool is used to detect common vulnerabilities including SQL Injection?", opts:["Google Search","OWASP ZAP","Spotify","Calculator"], correct:1, anchor:"OWASP ZAP (Zed Attack Proxy) is a free, open-source web scanner that automatically finds SQLi, XSS, and other OWASP Top 10 vulnerabilities." },
+      { q:"One major impact of SQL Injection is the ability to \"Bypass Authentication.\" What does this mean?", opts:["Deleting the website","Logging in without a valid password","Changing the website's name","Speeding up the login process"], correct:1, anchor:"Authentication bypass via SQLi allows attackers to log in as any user — including admin — without knowing the password, by injecting always-true SQL conditions." },
+      { q:"What can an attacker do to a database using SQL Injection besides retrieving data?", opts:["Only read the data","Modify or delete entire databases","Physically steal the server","Fix the database's bugs"], correct:1, anchor:"SQLi attacks can do far more than read data — attackers can INSERT, UPDATE, or DELETE records, drop tables, or even execute OS commands on the server." },
+      { q:"According to the presentation, where is SQL Injection ranked in web security risks?", opts:["It is not considered a risk","Among the most critical in the OWASP Top 10","The least important vulnerability","Only a risk for personal blogs"], correct:1, anchor:"SQL Injection consistently ranks in the OWASP Top 10 most critical web application security risks — it's been a top threat for over two decades." },
+      { q:"Using HTTPS (SSL/TLS) helps protect against SQLi-related session cookie manipulation by:", opts:["Deleting the cookies","Encrypting the communication","Changing the user's password","Turning off the database"], correct:1, anchor:"HTTPS encrypts the connection, preventing session cookie theft via man-in-the-middle attacks that could be used to hijack authenticated sessions." },
+      { q:"What is the benefit of \"Limiting the scope of SQL commands\"?", opts:["It makes the database smaller","It limits the damage an attacker can do","It makes the website's code more colorful","It allows more people to access the database"], correct:1, anchor:"Limiting SQL command scope (e.g., using read-only DB accounts for read operations) contains the blast radius — even if SQLi succeeds, damage is limited." },
+      { q:"Which of these is a database management system?", opts:["Oracle Database","Google Docs","PowerPoint","Windows Media Player"], correct:0, anchor:"Oracle Database is a relational DBMS. Other examples include MySQL, Microsoft SQL Server, and PostgreSQL — all vulnerable to SQLi if input is unsanitized." },
+      { q:"What is the impact of a \"Massive Data Leak\" caused by SQLi?", opts:["The website gets more visitors","Sensitive information of millions of users is exposed","The server runs more quietly","The company gets a prize for transparency"], correct:1, anchor:"A SQLi data leak exposes millions of records — usernames, passwords, payment data, PII — causing massive regulatory, financial, and reputational damage." },
+      { q:"True or False: SQL Injection can occur in login forms, search boxes, and URL parameters.", opts:["True","False"], correct:0, anchor:"Any user-controlled input that feeds into a SQL query is a potential SQLi vector — login forms, search boxes, URL params, HTTP headers, and cookies." },
+      { q:"True or False: Relational database systems like MySQL and Microsoft SQL Server are particularly vulnerable if input is not sanitized.", opts:["True","False"], correct:0, anchor:"MySQL, MS SQL Server, PostgreSQL, Oracle — all relational databases are vulnerable to SQLi when applications fail to sanitize user input properly." },
+      { q:"True or False: SQL Injection is a widespread vulnerability that has affected many famous companies.", opts:["True","False"], correct:0, anchor:"SQLi has breached Sony, Yahoo, LinkedIn, and many others — it remains one of the most exploited vulnerabilities in real-world attacks." },
+      { q:"Which of the following are potential impacts of an SQL Injection attack?", opts:["Bypassing authentication","Retrieving sensitive information","Modifying or deleting database content","All of the above"], correct:3, anchor:"SQLi has four major impacts: bypass authentication, extract sensitive data, modify/delete data, and potentially execute commands on the server." },
+      { q:"Which of the following tools can be used to test for or exploit SQL Injection?", opts:["SQLmap","Burp Suite","OWASP ZAP","All of the above"], correct:3, anchor:"SQLi testing uses a full toolkit: SQLmap (automated exploitation), Burp Suite (manual interception), and OWASP ZAP (automated scanning)." },
+      { q:"What are effective ways to prevent SQL Injection?", opts:["Using Parameterized Queries","Proper input validation and sanitization","Using secure protocols like HTTPS for session security","All of the above"], correct:3, anchor:"SQLi prevention needs three layers: parameterized queries (primary defense), input validation/sanitization (secondary), and HTTPS (session security)." },
+    ]
+  },
+  {
+    name: "Chapter 5 — Strategic Cyber Risk",
+    questions: [
+      { q:"In cybersecurity, what is the standard formula for calculating Risk?", opts:["Risk = Threat + Vulnerability","Risk = Likelihood × Impact","Risk = Cost ÷ Time","Risk = Assets - Threats"], correct:1, anchor:"Risk = Likelihood × Impact. This simplified formula assesses how probable a threat is and how severe the consequences would be if it materializes." },
+      { q:"Why has Strategic Cyber Risk become more prominent for businesses recently?", opts:["Because computers are now cheaper to buy","Due to high digital dependence on cloud systems and remote work","Because social media is used for marketing","Because hackers have stopped attacking personal computers"], correct:1, anchor:"Digital transformation (cloud, remote work) has dramatically expanded the attack surface — cybersecurity is now a board-level strategic concern." },
+      { q:"Which level of risk deals primarily with technical issues and isolated system failures?", opts:["Strategic Level","Operational/Technical Level","Executive Level","Marketing Level"], correct:1, anchor:"Operational/Technical risks are day-to-day technical issues — server failures, software bugs, network outages — isolated rather than enterprise-wide." },
+      { q:"What is considered one of the most valuable strategic assets in the digital age?", opts:["Physical office buildings","Data","Paper records","Desktop monitors"], correct:1, anchor:"Data is the new oil — it drives decisions, competitive advantage, and customer trust. Protecting data is protecting the organization's core strategic asset." },
+      { q:"What is a common cause of enterprise-level strategic threats mentioned in the slides?", opts:["Using a wired mouse instead of wireless","Human error combined with high privileges and weak governance","Having too many employees","Updating software too frequently"], correct:1, anchor:"The most dangerous strategic threat combination: privileged users making human errors in an environment with weak governance and oversight controls." },
+      { q:"What is a major recommendation for managing passwords across different websites?", opts:["Write them all down on a sticky note","Avoid using the same master password for multiple accounts","Use your name and birth year for every site","Share your passwords with a trusted colleague"], correct:1, anchor:"Never reuse passwords — especially the master password. A single leaked credential can cascade into multiple account takeovers via credential stuffing." },
+      { q:"What does the security acronym 2FA stand for?", opts:["Two-File Access","Two-Factor Authentication","Twice-Failed Attempt","Technical Firewall Analysis"], correct:1, anchor:"2FA = Two-Factor Authentication. It adds a second verification layer (something you know + something you have) making stolen passwords insufficient alone." },
+      { q:"Which 2FA method is generally recommended over SMS for better security?", opts:["A handwritten code","An authentication app","A phone call","A text message"], correct:1, anchor:"Authentication apps (Google Authenticator, Authy) are safer than SMS — SMS is vulnerable to SIM-swapping attacks that redirect your texts to an attacker." },
+      { q:"What is the primary purpose of a tool like \"Have I Been Pwned\"?", opts:["To download free movies","To check if an email address has been compromised in a data breach","To speed up a slow computer","To create a new email account"], correct:1, anchor:"Have I Been Pwned (HIBP) searches breach databases to tell you if your email/password appeared in known data breaches — essential for breach awareness." },
+      { q:"If your account is part of a data breach, what is the immediate recommended action?", opts:["Delete your email account","Change the affected password immediately","Buy a new computer","Call the police"], correct:1, anchor:"Immediately change the compromised password and enable 2FA. If you reused that password elsewhere, change it on those accounts too — credential stuffing is real." },
+      { q:"What is the result of a strategic organization's ability to anticipate risks?", opts:["They spend more money on repairs","They strengthen defenses before damage happens","they stop using technology entirely","They ignore the threats until they go away"], correct:1, anchor:"Proactive risk anticipation lets organizations strengthen defenses before attacks occur — the fundamental advantage of strategic cybersecurity thinking." },
+      { q:"Beyond technical failure, what does a strategic cyber incident damage?", opts:["The office air conditioning","The organization's overall strategy and competitive position","The local power grid","The physical weight of the servers"], correct:1, anchor:"Strategic cyber incidents damage far more than IT — they erode competitive position, customer trust, market share, and long-term organizational strategy." },
+      { q:"In the risk equation (Likelihood × Impact), \"Impact\" refers to:", opts:["How many people know about the risk","The severity of harm or loss caused by a threat","The speed of the hacker's typing","The size of the database"], correct:1, anchor:"Impact = the severity of consequences if the risk occurs: financial loss, data stolen, operations halted, reputation damaged, regulatory fines incurred." },
+      { q:"What is the primary focus of Strategic Cyber Risk Management?", opts:["Fixing a broken printer","Ensuring organization resilience in an evolving threat landscape","Choosing the best antivirus software","Helping employees work faster"], correct:1, anchor:"Strategic Cyber Risk Management focuses on organizational resilience — the ability to withstand, adapt to, and recover from cyber threats at the enterprise level." },
+      { q:"True or False: Risk is defined as the possibility that a threat can exploit a vulnerability to cause harm.", opts:["True","False"], correct:0, anchor:"This is the core risk definition: a threat exploiting a vulnerability to cause harm. All three elements (threat, vulnerability, harm) must be present." },
+      { q:"True or False: Protecting an organization's data is directly linked to protecting its reputation and trust.", opts:["True","False"], correct:0, anchor:"Data breaches destroy reputation — customers lose trust when their data is exposed. Data protection is reputation protection in the digital age." },
+      { q:"True or False: Cybersecurity is no longer just an IT issue but a fundamental business survival issue.", opts:["True","False"], correct:0, anchor:"Cybersecurity is now a boardroom issue — major breaches have bankrupted companies, ended executive careers, and wiped billions from market caps." },
+      { q:"Which of the following tools can help you check if your personal email has been part of a data leak?", opts:["Have I Been Pwned","Firefox Monitor","Avast Hack Check","All of the above"], correct:3, anchor:"Multiple tools check for compromised credentials: HIBP, Firefox Monitor, and Avast Hack Check all search breach databases — use them proactively." },
+      { q:"Which practices contribute to strong \"Information Hygiene\" and account protection?", opts:["Enabling Two-Factor Authentication (2FA)","Using unique passwords for each account","Regularly monitoring for data breaches","All of the above"], correct:3, anchor:"Information hygiene requires three habits: 2FA on all accounts, unique passwords everywhere, and proactive breach monitoring — all three working together." },
+      { q:"According to the lecture, Strategic Cyber Risk Management helps organizations:", opts:["Remain resilient against threats","Protect long-term success","Anticipate risks before damage occurs","All of the above"], correct:3, anchor:"Strategic Cyber Risk Management delivers three outcomes: resilience (withstand attacks), long-term success (protect value), and proactive defense (anticipate threats)." },
+    ]
+  },
+  {
+    name: "Chapter 6 — Social Engineering",
+    questions: [
+      { q:"What is the primary focus of Social Engineering?", opts:["Breaking into a server room using a hammer","Manipulating human psychology to gain unauthorized access","Writing complex code to crash a website","Buying new computers for a business"], correct:1, anchor:"Social engineering attacks the human OS — it exploits psychology (trust, fear, authority, urgency) rather than software vulnerabilities to gain access." },
+      { q:"what is considered the \"real weak point\" in cybersecurity?", opts:["Strong firewalls","The human factor (employees and users)","Advanced encryption","Faster internet speeds"], correct:1, anchor:"The human factor is the real weak point — no firewall stops a trained employee from being tricked into giving away credentials or granting access." },
+      { q:"Why is human error often harder to \"patch\" than technical flaws?", opts:["Because humans are unpredictable and influenced by emotions","Because antivirus software doesn't work on people","Because humans never make the same mistake twice","Because humans do not use computers"], correct:0, anchor:"Humans are unpredictable and emotionally driven — fear, trust, urgency, and greed can override training. There's no 'patch' for human nature." },
+      { q:"Which term describes a social engineering attack sent via email?", opts:["Smishing","Vishing","Phishing","Baiting"], correct:2, anchor:"Phishing = email-based social engineering. Smishing = SMS, Vishing = Voice/phone. Phishing is the most common form of social engineering attack." },
+      { q:"An attacker leaving a malicious USB drive in a parking lot for someone to find as a bait is using which technique?", opts:["Pretexting","Quid Pro Quo","Baiting","Vishing"], correct:2, anchor:"Baiting uses physical or digital lures — a 'free' USB drive, download, or prize — to entice victims into compromising their own security." },
+      { q:"What is \"Tailgating\" (or Piggybacking) in a physical security context?", opts:["Following an authorized person into a restricted area without a badge","Driving too close to another car in the parking lot","Sending too many emails at once","Watching someone type their password from a distance"], correct:0, anchor:"Tailgating exploits courtesy — attackers follow an authorized person through a secure door, bypassing physical access controls without credentials." },
+      { q:"In a \"Quid Pro Quo\" attack, the attacker typically offers:", opts:["A physical threat","A service or prize in exchange for information or access","To delete the user's files","A new job at a different company"], correct:1, anchor:"Quid Pro Quo ('something for something') offers a service or prize in exchange for credentials or access — fake IT support calls are a classic example." },
+      { q:"Why does an attacker use Urgency (e.g., \"Your account will be deleted in 10 minutes!!!\") ?", opts:["To give the victim more time to think","To pressure the victim into making a quick mistake without verifying the request","To show that they are very helpful","To test the speed of the victim's internet"], correct:1, anchor:"Urgency bypasses critical thinking — when people feel panicked they act fast and skip verification steps, which is exactly what the attacker wants." },
+      { q:"The tactic of \"Authority\" works because people are generally:", opts:["Afraid of technology","Hesitant to question or disobey someone they believe is a superior","Only interested in money","Very good at spotting fake IDs"], correct:1, anchor:"Authority exploits the human tendency to comply with perceived superiors. Impersonating a CEO, IT admin, or regulator dramatically increases compliance rates." },
+      { q:"What is the first step in a typical Social Engineering attack flow?", opts:["Building Rapport","Information Gathering","Executing the Attack","Removing all evidence"], correct:1, anchor:"Information Gathering is always first — attackers research the target (OSINT, social media, company website) before crafting a convincing pretext." },
+      { q:"What is the purpose of the \"Exit\" phase in an attack?", opts:["To say goodbye to the victim","To close the communication and remove traces of the interaction","To restart the victim's computer","To go to the next office building"], correct:1, anchor:"The exit phase closes the interaction cleanly and removes traces — a good social engineer leaves no suspicion, making forensic investigation difficult." },
+      { q:"Why do people often choose convenience over security?", opts:["Because they want to be hacked","Because secure options often require more effort or time","Because they do not know what security is","Because convenience is always free"], correct:1, anchor:"Security friction (extra steps, complexity) causes users to choose convenience — attackers exploit this by making the malicious path the easier one." },
+      { q:"What is an individual solution to defend against social engineering?", opts:["Sharing your password with a friend","Resisting the sense of urgency and verifying the requester's identity","Clicking every link to see where it goes","Turning off your firewall"], correct:1, anchor:"The personal defense is: pause, resist urgency, and always verify the requester's identity through a separate, trusted channel before complying." },
+      { q:"\"Zero-trust\" models are used by organizations to ensure:", opts:["No one is allowed to use the internet","No user or system is trusted by default","Only the CEO is allowed to have a password","The company doesn't trust any of its customers"], correct:1, anchor:"Zero-Trust means 'never trust, always verify' — no user or system gets implicit trust regardless of location, requiring continuous authentication and authorization." },
+      { q:"True or False: Social engineering relies on natural lapses in human attention, judgment, or procedure.", opts:["True","False"], correct:0, anchor:"Social engineering exploits natural human lapses — moments of distraction, rushed decisions, or procedural shortcuts that everyone experiences." },
+      { q:"True or False: People are more likely to believe information and trust others by default in social situations.", opts:["True","False"], correct:0, anchor:"Humans are wired for social trust — we default to believing people, especially those in authority. Social engineers weaponize this natural trust." },
+      { q:"True or False: Security awareness training is an essential organizational defense against human-focused attacks.", opts:["True","False"], correct:0, anchor:"Training converts the human factor from a vulnerability into a defense layer — aware employees recognize and report social engineering attempts." },
+      { q:"Which of the following are common psychological triggers used by social engineers?", opts:["Authority and Urgency","Fear and Greed","Trust and Helpfulness","All of the above"], correct:3, anchor:"Social engineers exploit six triggers: Authority, Urgency, Fear, Greed, Trust, and Helpfulness — all bypass rational thinking and drive compliance." },
+      { q:"Which of the following are examples of human error that can lead to a breach?", opts:["Clicking a malicious link in an email","Reusing the same password across multiple accounts","Sharing sensitive information without verifying the requester","All of the above"], correct:3, anchor:"Human errors that enable breaches: phishing link clicks, password reuse (credential stuffing), and unverified information sharing — all preventable with training." },
+      { q:"What are the potential impacts of a successful social engineering attack?", opts:["Financial fraud and data breaches","Exposure of personal and confidential data","Threats to national security and organizational stability","All of the above"], correct:3, anchor:"Social engineering attacks have devastating multi-level impacts: financial fraud, data exposure, and even national security threats in high-value targets." },
+    ]
+  },
+  {
+    name: "Chapter 7 — NIST Risk Management Framework",
+    questions: [
+      { q:"What is the NIST Risk Management Framework (RMF)?", opts:["A video editing software","A structured process for integrating security and privacy risk management into systems","A type of physical hardware lock","A social media platform for hackers"], correct:1, anchor:"The NIST RMF is a 7-step structured process that integrates security and privacy risk management into the system development lifecycle (SDLC)." },
+      { q:"Which law mandates risk-based security for all U.S. federal information systems?", opts:["The Copyright Act","FISMA (2014)","The Internet Freedom Act","The Privacy Shield"], correct:1, anchor:"FISMA (Federal Information Security Modernization Act 2014) mandates risk-based security for all U.S. federal systems — the RMF is how agencies comply." },
+      { q:"What is the name of Step 1 in the RMF?", opts:["Delete","Prepare","Finalize","Restart"], correct:1, anchor:"Step 1 is Prepare — establishing the organizational context, risk tolerance, and infrastructure before beginning formal risk management activities." },
+      { q:"What is the main goal of Step 2: Categorize?", opts:["To pick a name for the system","To determine the impact of a loss of confidentiality, integrity, and availability","To buy new laptops for the staff","To list the favorite websites of employees"], correct:1, anchor:"Categorize (Step 2) assesses the system's criticality by analyzing the potential impact if CIA (Confidentiality, Integrity, Availability) is compromised." },
+      { q:"Which NIST publication provides the \"catalog\" of security controls for Step 3: Select?", opts:["SP 800-53","Windows User Guide","The Daily News","Encyclopedia Britannica"], correct:0, anchor:"NIST SP 800-53 is the comprehensive catalog of security and privacy controls. Step 3 uses it to select controls appropriate for the system's risk category." },
+      { q:"What happens during Step 4: Implement?", opts:["The security controls are removed from the system","The security and privacy controls are put into place in the system","The project is cancelled","The system is formatted and deleted"], correct:1, anchor:"Step 4 Implement puts selected controls into practice — configuring firewalls, deploying MFA, writing policies, and documenting implementation details." },
+      { q:"What is the objective of Step 5: Assess?", opts:["To guess if the security is working","To determine if the controls are implemented correctly and working as intended","To count how many computers are in the room","To check the internet speed"], correct:1, anchor:"Step 5 Assess verifies that controls are correctly implemented and actually effective — not just checkbox compliance but real operational validation." },
+      { q:"Which tool is commonly used for Log analysis in the continuous monitoring step?", opts:["Microsoft Paint","SIEM tools","Calculator","Notepad"], correct:1, anchor:"SIEM (Security Information and Event Management) tools aggregate and analyze logs from across the environment — essential for continuous monitoring in Step 7." },
+      { q:"What does SP 800-37 represent in the NIST RMF?", opts:["The main guide for the RMF process","A list of all government employees","A marketing brochure for computers","A manual for building a firewall"], correct:0, anchor:"NIST SP 800-37 is the primary RMF guide — it provides the detailed process description, steps, tasks, and roles for implementing the framework." },
+      { q:"The NIST RMF is considered the \"global gold standard\" for:", opts:["Designing office layouts","Enterprise cybersecurity governance","Cooking recipes","Sports coaching"], correct:1, anchor:"The NIST RMF is globally recognized as the gold standard for enterprise cybersecurity governance — widely adopted beyond U.S. federal systems." },
+      { q:"RMF helps integrate security into which lifecycle?", opts:["The biological lifecycle","System Development Life Cycle (SDLC)","The fashion cycle","The business tax cycle"], correct:1, anchor:"RMF integrates security into the SDLC — ensuring security is built in from the start rather than bolted on as an afterthought at the end." },
+      { q:"What is \"Patch Management\" as mentioned in the Monitor activities?", opts:["Fixing holes in office furniture","Updating software to fix security vulnerabilities","Planting trees in the data center","Organizing files on a desktop"], correct:1, anchor:"Patch Management is the systematic process of applying software updates to fix known security vulnerabilities — a core continuous monitoring activity." },
+      { q:"What is a key benefit of having a standardized risk management approach?", opts:["It makes all passwords the same","It provides a consistent and repeatable way to manage risk","It allows everyone in the world to access your data","It makes the computer screen brighter"], correct:1, anchor:"Standardization provides consistency and repeatability — teams follow the same process, enabling comparison, improvement, and compliance verification over time." },
+      { q:"Which agency is the RMF primarily associated with?", opts:["NASA","NIST","FBI","CIA"], correct:1, anchor:"NIST (National Institute of Standards and Technology) developed and maintains the RMF — it's formally called the NIST Risk Management Framework." },
+      { q:"The NIST RMF is a structured process for managing security and privacy risk.", opts:["True","False"], correct:0, anchor:"The NIST RMF is explicitly designed as a structured, 7-step process that integrates both security AND privacy risk management into organizational systems." },
+      { q:"The NIST SP 800-53 publication contains a catalog of security and privacy controls.", opts:["True","False"], correct:0, anchor:"SP 800-53 is the control catalog — containing hundreds of security and privacy controls organized into families like Access Control, Incident Response, etc." },
+      { q:"Continuous monitoring is the final step (Step 7) in the NIST RMF lifecycle.", opts:["True","False"], correct:0, anchor:"Step 7 Monitor is the final and ongoing step — it makes the RMF a continuous cycle rather than a one-time project, keeping security current." },
+      { q:"What are the main benefits of using the NIST Risk Management Framework (RMF)?", opts:["Standardized approach to security","Improved resilience and better visibility into risks","Helps meet legal and compliance requirements","All of the above"], correct:3, anchor:"NIST RMF delivers three core benefits: standardization (consistent process), resilience (better security posture), and compliance (meets FISMA/regulatory requirements)." },
+      { q:"Which activities are part of Continuous Monitoring (Step 7)?", opts:["Log analysis and patch management","Incident detection and response","Periodic reassessment of controls","All of the above"], correct:3, anchor:"Step 7 continuous monitoring encompasses: log analysis (SIEM), patch management, incident detection/response, and periodic control reassessments." },
+      { q:"What are common challenges when implementing the NIST RMF?", opts:["It is a complex and detailed framework","It requires highly skilled professionals","It can be time-consuming and costly for small organizations","All of the above"], correct:3, anchor:"NIST RMF challenges: high complexity (detailed documentation), skilled-labor requirements, and resource intensity — particularly burdensome for small organizations." },
+    ]
+  },
+  {
+    name: "Chapter 8 — Risk Management Principles",
+    questions: [
+      { q:"What is the primary definition of Risk Management?", opts:["A reactive method of fixing problems after they happen","A proactive and structured approach to anticipate and mitigate negative events","A way to avoid taking any risks in business","A software tool used only for accounting"], correct:1, anchor:"Risk Management is proactive and structured — it anticipates and mitigates threats before they occur rather than reacting to damage after the fact." },
+      { q:"Which of the following are steps in the systematic risk management process?", opts:["Identifying and assessing risks","Developing control measures","Continuous monitoring and communication","All of the above"], correct:3, anchor:"The risk management cycle: Identify → Assess → Control → Communicate → Monitor. All five steps are required for an effective risk management system." },
+      { q:"What are the two core factors used to assess the severity of a risk?", opts:["Cost and Time","Likelihood and Impact","Speed and Distance","Size and Weight"], correct:1, anchor:"Risk severity = Likelihood (probability of occurrence) × Impact (severity of consequences). Both dimensions must be assessed to prioritize risks correctly." },
+      { q:"A threat that damages how customers perceive a company is known as a:", opts:["Financial threat","Brand reputation threat","Technical threat","Physical threat"], correct:1, anchor:"Brand reputation threats damage customer perception and market trust — often the hardest impact to recover from after a cybersecurity incident." },
+      { q:"What is the first step in the systematic risk management process?", opts:["Developing control measures","Identifying potential risks","Continuous monitoring","Communicating findings"], correct:1, anchor:"Identifying potential risks is always Step 1 — you cannot manage what you haven't identified. Risk identification creates the input for all subsequent steps." },
+      { q:"Which industry was highlighted as an example of integrating risk management to ensure safety and reliability?", opts:["Fast food","Fashion","Airlines","Music"], correct:2, anchor:"Airlines exemplify world-class risk management — their safety culture, checklists, redundancy, and continuous improvement make aviation statistically the safest transport." },
+      { q:"In risk assessment, what does the term \"Impact\" refer to?", opts:["How often a risk might happen","The severity of the consequences if the risk occurs","The speed of the internet connection","The number of employees in the company"], correct:1, anchor:"Impact = the severity of harm if the risk materializes: financial loss, data theft, operational downtime, regulatory fines, or reputational damage." },
+      { q:"Risk-based thinking is a fundamental component of which modern system?", opts:["Operating System","Quality Management System (QMS)","Social Media System","Email Filing System"], correct:1, anchor:"ISO 9001:2015 QMS explicitly requires risk-based thinking — organizations must identify, assess, and address risks and opportunities in their quality processes." },
+      { q:"What does \"Resilience\" mean for an organization?", opts:["Being completely immune to all problems","The ability to bounce back and continue operating after a disruption","Having the most expensive insurance policy","Never changing the business strategy"], correct:1, anchor:"Organizational resilience is the capacity to absorb disruptions, adapt, and recover quickly — accepting that incidents will happen and preparing to survive them." },
+      { q:"Why is \"Continuous Monitoring\" a critical part of the risk process?", opts:["Because risks can change and evolve over time","Because it is a legal requirement to watch a screen 24/7","Because it prevents employees from taking breaks","It is actually the least important step"], correct:0, anchor:"The threat landscape constantly evolves — new vulnerabilities, attack techniques, and business changes create new risks. Continuous monitoring catches these changes." },
+      { q:"Beyond avoiding loss, effective risk management helps organizations capitalize on:", opts:["Future debts","Emerging opportunities","Software bugs","Competitor failures"], correct:1, anchor:"Risk management is not just defensive — identifying and accepting calculated risks creates opportunities for innovation, competitive advantage, and growth." },
+      { q:"\"Operational Continuity\" refers to the ability to:", opts:["Close the business during a crisis","Keep essential functions running during and after a disaster","Change the company name every month","Hire new employees very quickly"], correct:1, anchor:"Operational continuity means maintaining essential business functions through disruptions — the goal of Business Continuity Planning (BCP) and Disaster Recovery." },
+      { q:"Aligning risk processes with strategic objectives ensures that risk management contributes to:", opts:["Sustainable growth","Higher electricity costs","More complicated paperwork","Replacing all human staff with AI"], correct:0, anchor:"Risk-strategy alignment transforms risk management from a compliance exercise into a strategic enabler that supports and protects long-term business growth." },
+      { q:"Building a resilient culture requires embedding risk awareness at:", opts:["Only the CEO level","Every organizational level","Only the IT department","Only the security guard station"], correct:1, anchor:"Risk culture must be organization-wide — from the boardroom to the front line, every employee must understand and contribute to managing risk." },
+      { q:"Which of the following are steps in the systematic risk management process?", opts:["Identifying and assessing risks","Developing control measures","Continuous monitoring and communication","All of the above"], correct:3, anchor:"All five steps form a complete cycle: Identify, Assess, Control, Communicate, and Monitor — omitting any step creates dangerous blind spots." },
+      { q:"Failing to manage organizational risks can lead to which of the following?", opts:["Financial instability","Damage to brand reputation","Non-compliance with regulations","All of the above"], correct:3, anchor:"Unmanaged risks hit on all fronts: financial losses, reputational damage, and regulatory penalties — the triple threat that can destroy an organization." },
+      { q:"Building a resilient risk management culture involves which of the following actions?", opts:["Embedding risk awareness at every level","Investing in training and digital tools","Aligning risk processes with strategic objectives","All of the above"], correct:3, anchor:"Resilient risk culture requires three investments: people (embedded awareness), capabilities (training/tools), and alignment (strategy integration)." },
+      { q:"True or False: Risk management is a proactive approach designed to anticipate and mitigate negative events.", opts:["True","False"], correct:0, anchor:"Proactive is the defining characteristic of effective risk management — anticipating threats before they materialize rather than responding after damage occurs." },
+      { q:"True or False: The ISO 9001:2015 standard explicitly mandates that organizations identify risks.", opts:["True","False"], correct:0, anchor:"ISO 9001:2015 made risk-based thinking mandatory — organizations must formally identify, assess, and address risks as part of their quality management system." },
+      { q:"True or False: Effective risk management can transform potential threats into opportunities for resilience and growth.", opts:["True","False"], correct:0, anchor:"Well-managed risks become competitive advantages — organizations that navigate threats better than competitors emerge stronger and more resilient." },
+    ]
+  },
+  {
+    name: "Chapter 9 — Organizational Risk & Vulnerabilities",
+    questions: [
+      { q:"How is Organizational Risk defined in the lecture?", opts:["The risk of the office running out of physical storage space","Any threat that can negatively impact a company's operations, finances, or reputation","A risk that only affects the computer hardware, not the people","The risk of a company's stock price changing every day"], correct:1, anchor:"Organizational risk covers any threat impacting operations, finances, or reputation — it's broader than IT risk and requires enterprise-wide management." },
+      { q:"What is a Data Breach?", opts:["A software update that changes the look of a website","Unauthorized access to sensitive information, exposing customer data","When a user accidentally deletes their own personal files","When a server is moved to a different room"], correct:1, anchor:"A data breach is unauthorized access to sensitive data — customer PII, credentials, payment data — exposing it to unauthorized parties." },
+      { q:"What is a System Vulnerability?", opts:["A computer that is turned off for maintenance","Software weakness or unpatched systems that create entry points for attackers","A keyboard that is difficult for a user to type on","A monitor with a low screen resolution"], correct:1, anchor:"System vulnerabilities are software weaknesses or unpatched flaws that create exploitable entry points — attackers actively scan for these using tools like Nmap and Nessus." },
+      { q:"In the risk management process, what is the purpose of a Risk Matrix?", opts:["To list every employee's contact information","To assess and prioritize risks based on their likelihood and impact","To calculate the total cost of the company's electricity","To design a new logo for the security team"], correct:1, anchor:"A Risk Matrix visualizes risks on a Likelihood × Impact grid, creating a heat map that tells managers which risks to address first with limited resources." },
+      { q:"What does Risk Acceptance mean?", opts:["Ignoring the risk and hoping it doesn't happen","Accepting a conscious decision to live with a risk because it is low","Deleting all data associated with the risk","Hiring a new team to manage the risk"], correct:1, anchor:"Risk Acceptance is a conscious, documented decision to tolerate a low risk because the cost of mitigation exceeds the potential harm — it's not the same as ignoring it." },
+      { q:"When an organization decides to stop an activity to eliminate a risk, this is called:", opts:["Risk Mitigation","Risk Avoidance","Risk Transfer","Risk Acceptance"], correct:1, anchor:"Risk Avoidance eliminates risk by eliminating the activity that creates it — the most complete risk treatment, but sometimes too costly operationally." },
+      { q:"Which of these is a common example of Risk Transfer?", opts:["Installing a better firewall","Purchasing a cyber insurance policy","Changing all user passwords","Buying new computers"], correct:1, anchor:"Cyber insurance is the primary Risk Transfer mechanism — it shifts financial consequences of a breach to the insurer while the risk itself remains." },
+      { q:"How does the lecture describe Phishing?", opts:["Attacking a server using a 'Brute Force' method","Deceptive emails designed to trick users into revealing credentials","A type of malware that hides inside an image","A physical attack on a network cable"], correct:1, anchor:"Phishing uses deceptive emails mimicking trusted entities to trick users into revealing credentials, clicking malicious links, or installing malware." },
+      { q:"What is Pretexting in a social engineering attack?", opts:["Sending a text message to a coworker","Creating a fabricated scenario to obtain information from a target","Testing the security of a website's code","Formatting a hard drive"], correct:1, anchor:"Pretexting creates a fabricated identity or scenario (fake IT support, fake auditor) to manipulate victims into providing information or access." },
+      { q:"An attacker offering a \"free download\" to lure a victim into a trap is using which technique?", opts:["Threatening","Baiting","Phishing","Scanning"], correct:1, anchor:"Baiting uses tempting offers — free software, USB drives, prizes — to lure victims into a trap that installs malware or steals credentials." },
+      { q:"What is the main goal of Vulnerability Management?", opts:["To make the internet connection faster","To proactively discover, assess, and remediate security weaknesses","To count how many viruses are on a single computer","To replace all human staff with automated robots"], correct:1, anchor:"Vulnerability Management is the continuous cycle of discovering, assessing, prioritizing, and remediating security weaknesses before attackers exploit them." },
+      { q:"What is an example of a Human Error in cybersecurity?", opts:["A hacker cracking a complex password","Accidental actions like clicking a malicious link or misconfiguring a system","A software company releasing a new version of an app","A power outage in the city"], correct:1, anchor:"Human errors — clicking phishing links, misconfiguring servers, using weak passwords — are involved in the majority of all data breaches worldwide." },
+      { q:"Why is \"Monitoring & Maintaining\" part of the vulnerability process?", opts:["To see which employees are the most productive","To ensure systems stay secure and new weaknesses are found quickly","To check if the office printer has enough ink","To update the company's public website"], correct:1, anchor:"Monitoring and maintaining ensures ongoing security — new vulnerabilities are discovered daily and systems change constantly, requiring continuous vigilance." },
+      { q:"According to the \"Value of Cybersecurity\" slide, risk management helps organizations:", opts:["Lower their taxes every year","Protect data and continue operations safely","Work fewer hours during the week","Eliminate the need for any passwords"], correct:1, anchor:"Cybersecurity's core value proposition: protect data (preventing breaches) and ensure operational continuity (preventing downtime) — both are business-critical." },
+      { q:"True or False: Organizational risk represents threats that can negatively impact a company's operations, finances, or reputation.", opts:["True","False"], correct:0, anchor:"Organizational risk spans three dimensions: operational (disruption), financial (losses/fines), and reputational (trust damage) — all three must be managed." },
+      { q:"True or False: Risk Mitigation involves implementing security controls to reduce the likelihood of a successful attack.", opts:["True","False"], correct:0, anchor:"Risk Mitigation reduces likelihood (making attacks harder) and/or impact (limiting damage when attacks succeed) through technical and administrative controls." },
+      { q:"True or False: Vulnerability management is a continuous process of identifying, assessing, and fixing weaknesses.", opts:["True","False"], correct:0, anchor:"Vulnerability management is never finished — new CVEs are published daily, systems change, and threat actors constantly develop new exploitation techniques." },
+      { q:"Which of the following are considered types of cybersecurity risks?", opts:["Data Breaches and Malware","Insider Threats","Phishing","All of the above"], correct:3, anchor:"The cybersecurity risk landscape includes technical threats (malware, breaches), human threats (insider, phishing), and hybrid combinations of both." },
+      { q:"What are the primary sources of cybersecurity risk for an organization?", opts:["External attackers and internal employees","System vulnerabilities","Human errors","All of the above"], correct:3, anchor:"Cybersecurity risk comes from three directions: external attackers, internal threats (employees), and the vulnerabilities/human errors that enable both." },
+      { q:"Which of the following tactics are used in Social Engineering attacks?", opts:["Phishing","Pretexting","Baiting","All of the above"], correct:3, anchor:"Social engineering tactics include Phishing (email deception), Pretexting (fabricated scenarios), and Baiting (tempting lures) — all exploit human psychology." },
+    ]
+  },
+  {
+    name: "Chapter 10 — Incident Response",
+    questions: [
+      { q:"What is a likely consequence for organizations that ignore risk management?", opts:["More vacation time for staff","Financial losses and operational downtime","Faster internet speeds","Automatic software updates"], correct:1, anchor:"Ignoring risk management leads to unplanned incidents that cause financial losses (breach costs, fines, ransomware) and operational downtime (systems offline)." },
+      { q:"Which process focuses on preventing attacks before they happen using updates and training?", opts:["Response","Prevention","Recovery","Eradication"], correct:1, anchor:"Prevention proactively stops attacks through patching (closing vulnerabilities), training (reducing human error), and security controls (blocking threats)." },
+      { q:"The primary goal of Incident Response is to:", opts:["Delete all company data","Protect systems and restore normal operations","Ignore the threat until it goes away","Sell the affected computers"], correct:1, anchor:"Incident Response has one primary goal: protect systems and restore normal operations as quickly as possible while minimizing damage and preserving evidence." },
+      { q:"How does a quick and efficient response help an organization's reputation?", opts:["It makes the company invisible","It helps preserve reputation and gain trust from clients","It allows the company to hide the incident forever","It guarantees the company will never be hacked again"], correct:1, anchor:"Transparency and rapid response preserve reputation — clients trust organizations that handle incidents professionally more than those that hide or mismanage them." },
+      { q:"Why does the speed of detection matter in cybersecurity?", opts:["It determines the color of the security alerts","It greatly affects the amount of damage caused by an incident","It makes the computer keyboard easier to use","It only matters if the incident happens on a weekend"], correct:1, anchor:"Dwell time (time attacker spends undetected) directly correlates with damage — the average breach takes 200+ days to detect, and the longer it lasts, the worse it gets." },
+      { q:"What is the goal of the \"Contain\" phase?", opts:["To tell everyone in the city about the attack","To limit the spread and impact of the incident","To turn off the electricity in the building","To uninstall all antivirus software"], correct:1, anchor:"Containment stops the bleeding — isolating affected systems, blocking malicious IPs, or revoking compromised credentials to prevent further spread." },
+      { q:"Which phase focuses on returning systems to normal functionality?", opts:["Preparation","Recovery","Analysis","Weaponization"], correct:1, anchor:"Recovery restores systems to normal operation — rebuilding compromised systems, restoring from clean backups, and verifying integrity before returning to production." },
+      { q:"Why do teams conduct a \"Lessons Learned\" session?", opts:["To find someone to blame for the mistake","To analyze the incident and improve future response procedures","To celebrate the end of the work week","To delete all records of the incident"], correct:1, anchor:"Lessons Learned is a post-incident retrospective — analyzing what happened, what worked, and what failed to improve the response plan for the next incident." },
+      { q:"What is the difference between IDS and IPS?", opts:["IDS blocks traffic while IPS only watches it","IDS detects activity while IPS can actively block malicious traffic","IDS is for phones and IPS is for laptops","There is no difference between them"], correct:1, anchor:"IDS (Intrusion Detection System) detects and alerts. IPS (Intrusion Prevention System) detects AND actively blocks — IPS is IDS with an automated response capability." },
+      { q:"What is the main benefit of a SOAR platform?", opts:["It makes the office chairs more comfortable","It automates and orchestrates incident response processes","It allows hackers to enter the network more easily","It replaces the need for any security team"], correct:1, anchor:"SOAR (Security Orchestration, Automation, and Response) automates repetitive IR tasks — alert triage, threat hunting, ticket creation — dramatically speeding up response." },
+      { q:"In incident classification, a \"High\" severity level typically means the threat:", opts:["Has a limited impact on systems","Threatens critical data or halts operations","Affects only the guest Wi-Fi","Is just a minor typo in a document"], correct:1, anchor:"High severity = critical impact — the threat targets essential systems, critical data, or can halt operations. These require immediate escalation and response." },
+      { q:"Who has the primary responsibility to monitor, analyze, and respond to incidents?", opts:["The HR department","The Security Team","The cleaning staff","The customers"], correct:1, anchor:"The Security Team (or SOC — Security Operations Center) owns incident monitoring, analysis, and response — they are the organization's cyber first responders." },
+      { q:"What does MTTD (Mean Time to Detect) measure?", opts:["How long it takes to fix a broken monitor","How quickly security incidents are detected after they occur","The total cost of the security tools","The number of emails sent by the CEO"], correct:1, anchor:"MTTD measures detection speed — how quickly the security team identifies an active incident. Lower MTTD = less dwell time = less damage." },
+      { q:"MTTR (Mean Time to Respond) measures the time it takes to:", opts:["Answer a phone call","Contain and resolve the incident","Order new hardware","Update a social media status"], correct:1, anchor:"MTTR measures response effectiveness — from detection to containment and resolution. Combined with MTTD, these KPIs measure SOC performance." },
+      { q:"True or False: A good incident response plan helps organizations learn from each incident to improve future security measures.", opts:["True","False"], correct:0, anchor:"Each incident is a learning opportunity — post-incident reviews identify gaps in detection, response, and prevention to continuously improve security posture." },
+      { q:"True or False: Response refers to dealing with incidents after they occur, starting from detection.", opts:["True","False"], correct:0, anchor:"Response is the reactive component of security — it activates after an incident is detected and covers containment, eradication, recovery, and lessons learned." },
+      { q:"True or False: Preparation includes defining policies, preparing tools, and training the team for readiness.", opts:["True","False"], correct:0, anchor:"Preparation is the most important IR phase — defining playbooks, deploying detection tools, and drilling the team before incidents occur determines response effectiveness." },
+      { q:"Why is having an effective incident response plan important for an organization?", opts:["It helps maintain reputation and trust","It protects sensitive data from exposure","It reduces financial losses from attacks","All of the above"], correct:3, anchor:"An IR plan protects on three fronts simultaneously: reputation (professional response), data (containment), and finances (reduced breach costs)." },
+      { q:"What are some of the components typically found in an Incident Response Policy?", opts:["Steps for handling incidents","Team responsibilities","Expected response timelines","All of the above"], correct:3, anchor:"A complete IR policy defines three things: the process (steps), the people (responsibilities), and the timeline (SLAs for detection, containment, recovery)." },
+      { q:"According to the presentation, what are common sources used to detect an incident?", opts:["System logs","Security alerts","User reports of unusual activity","All of the above"], correct:3, anchor:"Incidents are detected from multiple sources: automated SIEM alerts, log analysis, and human reports — a layered detection approach catches what automation misses." },
+    ]
+  }
+];
+
+/* ── STATE ── */
+let activeQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = 0;
+let autoTimer = null;
+let selectedChapters = new Set();
+
+const LETTERS = ['A','B','C','D','E'];
+
+/* ── BUILD CHAPTER SELECT ── */
+function buildChapterSelect() {
+  const grid = document.getElementById('chapterGrid');
+  CHAPTERS.forEach((ch, i) => {
+    const card = document.createElement('div');
+    card.className = 'ch-card';
+    card.dataset.idx = i;
+    const subtitle = ch.name.split('—')[1]?.trim() || ch.name;
+    card.innerHTML = `
+      <div class="ch-num">CHAPTER ${i+1}</div>
+      <div class="ch-title">${subtitle}</div>
+      <div class="ch-count">${ch.questions.length} questions</div>
+    `;
+    card.onclick = () => toggleChapter(i, card);
+    grid.appendChild(card);
+  });
+}
+
+function toggleChapter(idx, card) {
+  if (selectedChapters.has(idx)) {
+    selectedChapters.delete(idx);
+    card.classList.remove('selected');
+  } else {
+    selectedChapters.add(idx);
+    card.classList.add('selected');
+  }
+}
+
+function startQuiz(mode) {
+  let pool = [];
+  if (mode === 'all') {
+    CHAPTERS.forEach(ch => pool.push(...ch.questions.map(q => ({...q, chapter: ch.name}))));
+  } else {
+    if (selectedChapters.size === 0) {
+      CHAPTERS.forEach(ch => pool.push(...ch.questions.map(q => ({...q, chapter: ch.name}))));
+    } else {
+      selectedChapters.forEach(i => {
+        CHAPTERS[i].questions.forEach(q => pool.push({...q, chapter: CHAPTERS[i].name}));
+      });
+    }
+  }
+  activeQuestions = pool.sort(() => Math.random() - 0.5);
+  currentIndex = 0; score = 0; answered = 0;
+  document.getElementById('chapter-select').style.display = 'none';
+  document.getElementById('progressWrap').style.display   = 'flex';
+  document.getElementById('quizArea').style.display       = 'block';
+  document.getElementById('results').style.display        = 'none';
+  renderQuestion();
+}
+
+/* ── RENDER ── */
+function renderQuestion() {
+  if (currentIndex >= activeQuestions.length) { showResults(); return; }
+  const q = activeQuestions[currentIndex];
+  const total = activeQuestions.length;
+
+  document.getElementById('progressLabel').textContent = `Question ${currentIndex+1} of ${total}`;
+  document.getElementById('scoreLive').textContent     = `Score: ${score}`;
+  document.getElementById('barFill').style.width       = `${(currentIndex/total)*100}%`;
+  document.getElementById('chapterBadge').textContent  = q.chapter || '';
+  document.getElementById('qNumber').textContent       = `Q${currentIndex+1}`;
+  document.getElementById('qText').textContent         = q.q;
+
+  const anchor = document.getElementById('anchor');
+  anchor.style.display = 'none';
+  document.getElementById('anchorText').textContent = q.anchor || '';
+
+  const tb = document.getElementById('timerBar');
+  tb.style.transition = 'none';
+  tb.style.width = '0%';
+
+  const shuffled = q.opts.map((_,i) => i).sort(() => Math.random() - 0.5);
+  const optContainer = document.getElementById('options');
+  optContainer.innerHTML = '';
+
+  shuffled.forEach((origIdx, displayPos) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.dataset.origIdx = origIdx;
+    div.dataset.correct = (origIdx === q.correct) ? 'true' : 'false';
+    div.innerHTML = `
+      <div class="opt-label">${LETTERS[displayPos]}</div>
+      <div class="opt-text">${q.opts[origIdx]}</div>
+      <div class="opt-icon">${origIdx === q.correct ? '✓' : '✗'}</div>
+    `;
+    div.onclick = () => handleAnswer(div);
+    optContainer.appendChild(div);
+  });
+
+  const card = document.getElementById('card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'fadeSlideIn .35s ease both';
+}
+
+/* ── ANSWER ── */
+function handleAnswer(clickedDiv) {
+  document.querySelectorAll('.opt').forEach(o => o.classList.add('locked'));
+  const isCorrect = clickedDiv.dataset.correct === 'true';
+  if (isCorrect) {
+    score++;
+    clickedDiv.classList.add('correct');
+  } else {
+    clickedDiv.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(o => {
+      if (o.dataset.correct === 'true') o.classList.add('correct');
+    });
+  }
+  answered++;
+  document.getElementById('anchor').style.display = 'block';
+
+  const tb = document.getElementById('timerBar');
+  requestAnimationFrame(() => {
+    tb.style.transition = 'width 1.7s linear';
+    tb.style.width = '100%';
+  });
+
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => { currentIndex++; renderQuestion(); }, 1850);
+}
+
+/* ── RESULTS ── */
+function showResults() {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('quizArea').style.display     = 'none';
+  const r = document.getElementById('results');
+  r.style.display = 'block';
+
+  const pct = Math.round((score / activeQuestions.length) * 100);
+  document.getElementById('scorePercent').textContent = pct;
+  document.getElementById('statCorrect').textContent  = score;
+  document.getElementById('statWrong').textContent    = activeQuestions.length - score;
+  document.getElementById('statTotal').textContent    = activeQuestions.length;
+
+  let grade, trophy;
+  if (pct >= 90)      { grade='Outstanding! 🔥 A+'; trophy='🏆'; }
+  else if (pct >= 80) { grade='Excellent work! A';   trophy='🥇'; }
+  else if (pct >= 70) { grade='Good job! B';          trophy='🎯'; }
+  else if (pct >= 60) { grade='Passing grade. C';     trophy='📚'; }
+  else                { grade='Keep studying! 💪';    trophy='🔄'; }
+
+  document.getElementById('trophy').textContent       = trophy;
+  document.getElementById('resultsTitle').textContent = grade;
+  document.getElementById('resultsGrade').textContent = `You answered ${score} of ${activeQuestions.length} questions correctly.`;
+}
+
+function resetToMenu() {
+  document.getElementById('results').style.display        = 'none';
+  document.getElementById('chapter-select').style.display = 'block';
+  selectedChapters.clear();
+  document.querySelectorAll('.ch-card').forEach(c => c.classList.remove('selected'));
+}
+
+buildChapterSelect();
+</script>
+</body>
+</html>
